@@ -27,6 +27,8 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider
+      signInForceRedirectUrl="/home"
+      signUpForceRedirectUrl="/home"
       appearance={{
         layout: {
           socialButtonsVariant: "iconButton",

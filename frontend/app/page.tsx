@@ -1,10 +1,18 @@
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 import Link from "next/link";
 import Header from "@/components/header";
 
-export default function Home() {
+export default async function Home() {
+  const { userId } = await auth();
+  
+  if (userId) {
+    redirect("/home");
+  }
+
   return (
     <>
     <Header />
@@ -35,14 +43,6 @@ export default function Home() {
                <Button className="bg-green-50 hover:bg-green-100 border border-green-900 text-green-900 transition-colors cursor-pointer" size="lg">Sign In</Button>
              </Link>
           </SignedOut>
-          {/* <SignedIn>
-            <Link href="/dashboard">
-              <Button size="lg" className="bg-emerald-600 hover:bg-emerald-700 border border-green-900 text-white transition-colors cursor-pointer">Go to Dashboard</Button>
-            </Link>
-            <div className="flex items-center ml-4">
-              <UserButton />
-            </div>
-          </SignedIn> */}
         </div>
       </div>
     </main>
