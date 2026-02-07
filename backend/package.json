@@ -17,6 +17,7 @@
 		"@fastify/swagger-ui": "^5.2.5",
 		"@prisma/adapter-pg": "^7.3.0",
 		"@prisma/client": "^7.3.0",
+		"axios": "^1.13.4",
 		"bcrypt": "^6.0.0",
 		"dotenv": "^17.2.4",
 		"fastify": "^5.7.4",
