@@ -14,6 +14,7 @@ import { generateMockData } from "@/lib/mock-data";
 import { currentUser } from "@clerk/nextjs/server";
 import { ArrowDownCircle, ArrowUpCircle, PlusCircle, Wallet } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
 export default async function HomePage() {
@@ -45,11 +46,15 @@ export default async function HomePage() {
             </div>
             </div>
             <div className="flex gap-2">
-                <Button>
-                    <PlusCircle className="mr-2 w-4 h-4" /> Add Income
+                <Button asChild>
+                    <Link href="/transactions/income">
+                        <PlusCircle className="mr-2 w-4 h-4" /> Add Income
+                    </Link>
                 </Button>
-                 <Button variant="outline">
-                    <PlusCircle className="mr-2 w-4 h-4" /> Add Expense
+                 <Button variant="outline" asChild>
+                    <Link href="/transactions/expense">
+                        <PlusCircle className="mr-2 w-4 h-4" /> Add Expense
+                    </Link>
                 </Button>
             </div>
         </div>

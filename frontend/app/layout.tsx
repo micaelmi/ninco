@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
+import { QueryProvider } from "@/providers/query-provider";
+import { UserIdProvider } from "@/providers/user-id-provider";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -49,7 +51,11 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            {children}
+            <QueryProvider>
+              <UserIdProvider>
+                {children}
+              </UserIdProvider>
+            </QueryProvider>
           </ThemeProvider>
         </body>
       </html>
