@@ -30,20 +30,60 @@ export async function updateTransaction(app: FastifyInstance) {
     const { id } = request.params;
     const { amount, type, date, description, comments, categoryId, tagIds, accountId } = request.body;
 
-    const transaction = await prisma.transaction.update({
-      where: { id, userId },
-      data: {
-        amount,
-        type,
-        date: date ? new Date(date) : undefined,
-        description,
-        comments,
-        categoryId,
-        accountId,
-        tags: tagIds ? {
-          set: tagIds.map(id => ({ id })),
-        } : undefined,
-      },
+    const transaction = await prisma.$transaction(async (tx) => {
+      const oldTransaction = await tx.transaction.findUnique({
+        where: { id, userId },
+      });
+
+      if (!oldTransaction) {
+        throw new Error('Transaction not found');
+      }
+
+      // 1. Revert old balance impact
+      const oldBalanceChange = oldTransaction.type === 'INCOME' ? -oldTransaction.amount.toNumber() : oldTransaction.amount.toNumber();
+      await tx.account.update({
+        where: { id: oldTransaction.accountId },
+        data: {
+          balance: {
+            increment: oldBalanceChange,
+          },
+        },
+      });
+
+      // 2. Apply new balance impact
+      const finalAccountId = accountId || oldTransaction.accountId;
+      const finalAmount = amount !== undefined ? amount : oldTransaction.amount.toNumber();
+      const finalType = type || oldTransaction.type;
+      
+      const newBalanceChange = finalType === 'INCOME' ? finalAmount : -finalAmount;
+      
+      await tx.account.update({
+        where: { id: finalAccountId },
+        data: {
+          balance: {
+            increment: newBalanceChange,
+          },
+        },
+      });
+
+      // 3. Update the transaction
+      const updatedTransaction = await tx.transaction.update({
+        where: { id, userId },
+        data: {
+          amount,
+          type,
+          date: date ? new Date(date) : undefined,
+          description,
+          comments,
+          categoryId,
+          accountId,
+          tags: tagIds ? {
+            set: tagIds.map(id => ({ id })),
+          } : undefined,
+        },
+      });
+
+      return updatedTransaction;
     });
 
     return {

@@ -33,20 +33,35 @@ export async function createTransaction(app: FastifyInstance) {
     const userId = request.headers['x-user-id'] as string;
     const { amount, type, date, description, comments, categoryId, tagIds, accountId } = request.body;
 
-    const transaction = await prisma.transaction.create({
-      data: {
-        userId,
-        accountId,
-        amount,
-        type,
-        date: new Date(date),
-        description,
-        comments,
-        categoryId,
-        tags: tagIds ? {
-          connect: tagIds.map(id => ({ id })),
-        } : undefined,
-      },
+    const transaction = await prisma.$transaction(async (tx) => {
+      const transaction = await tx.transaction.create({
+        data: {
+          userId,
+          accountId,
+          amount,
+          type,
+          date: new Date(date),
+          description,
+          comments,
+          categoryId,
+          tags: tagIds ? {
+            connect: tagIds.map(id => ({ id })),
+          } : undefined,
+        },
+      });
+
+      // Update Account balance
+      const balanceChange = type === 'INCOME' ? amount : -amount;
+      await tx.account.update({
+        where: { id: accountId },
+        data: {
+          balance: {
+            increment: balanceChange,
+          },
+        },
+      });
+
+      return transaction;
     });
 
     return reply.status(201).send({
