@@ -3,7 +3,7 @@ import cors from '@fastify/cors';
 import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
 import { jsonSchemaTransform, serializerCompiler, validatorCompiler } from 'fastify-type-provider-zod';
-import { appRoutes } from './routes';
+import { appRoutes } from './modules';
 
 const app = fastify().withTypeProvider();
 

@@ -1,9 +1,8 @@
 import { FastifyInstance } from 'fastify';
 import { Webhook } from 'svix';
-import { z } from 'zod';
-import { prisma } from '../lib/prisma';
+import { prisma } from '../../lib/prisma';
 
-export async function webhookRoutes(app: FastifyInstance) {
+export async function clerkSync(app: FastifyInstance) {
   app.post('/clerk', async (request, reply) => {
     const CLERK_WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET;
 
