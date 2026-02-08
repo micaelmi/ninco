@@ -16,7 +16,7 @@ export async function createTag(app: FastifyInstance) {
       }),
       response: {
         201: z.object({
-          id: z.string().uuid(),
+          id: z.uuid(),
           name: z.string(),
           userId: z.string(),
           createdAt: z.date(),

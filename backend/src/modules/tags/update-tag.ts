@@ -12,14 +12,14 @@ export async function updateTag(app: FastifyInstance) {
         'x-user-id': z.string().describe('Clerk User ID'),
       }),
       params: z.object({
-        id: z.string().uuid(),
+        id: z.uuid(),
       }),
       body: z.object({
         name: z.string(),
       }),
       response: {
         200: z.object({
-          id: z.string().uuid(),
+          id: z.uuid(),
           name: z.string(),
           userId: z.string(),
           createdAt: z.date(),

@@ -13,9 +13,11 @@ export async function listCategories(app: FastifyInstance) {
       }),
       response: {
         200: z.array(z.object({
-          id: z.string().uuid(),
+          id: z.uuid(),
           name: z.string(),
           color: z.string().nullable(),
+          icon: z.string().nullable(),
+          type: z.enum(['INCOME', 'EXPENSE']),
           userId: z.string().nullable(),
           createdAt: z.date(),
         })),

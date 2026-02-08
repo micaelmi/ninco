@@ -12,22 +12,23 @@ export async function updateTransaction(app: FastifyInstance) {
         'x-user-id': z.string().describe('Clerk User ID'),
       }),
       params: z.object({
-        id: z.string().uuid(),
+        id: z.uuid(),
       }),
       body: z.object({
         amount: z.number().optional(),
         type: z.enum(['INCOME', 'EXPENSE']).optional(),
         date: z.string().datetime().optional(),
         description: z.string().optional(),
+        accountId: z.uuid().optional(),
         comments: z.string().optional(),
-        categoryId: z.string().uuid().nullable().optional(),
-        tagIds: z.array(z.string().uuid()).optional(),
+        categoryId: z.uuid().nullable().optional(),
+        tagIds: z.array(z.uuid()).optional(),
       }),
     },
   }, async (request) => {
     const userId = request.headers['x-user-id'] as string;
     const { id } = request.params;
-    const { amount, type, date, description, comments, categoryId, tagIds } = request.body;
+    const { amount, type, date, description, comments, categoryId, tagIds, accountId } = request.body;
 
     const transaction = await prisma.transaction.update({
       where: { id, userId },
@@ -38,6 +39,7 @@ export async function updateTransaction(app: FastifyInstance) {
         description,
         comments,
         categoryId,
+        accountId,
         tags: tagIds ? {
           set: tagIds.map(id => ({ id })),
         } : undefined,

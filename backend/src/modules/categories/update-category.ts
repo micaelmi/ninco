@@ -12,17 +12,21 @@ export async function updateCategory(app: FastifyInstance) {
         'x-user-id': z.string().describe('Clerk User ID'),
       }),
       params: z.object({
-        id: z.string().uuid(),
+        id: z.uuid(),
       }),
       body: z.object({
         name: z.string().optional(),
         color: z.string().optional(),
+        icon: z.string().optional(),
+        type: z.enum(['INCOME', 'EXPENSE']).optional(),
       }),
       response: {
         200: z.object({
-          id: z.string().uuid(),
+          id: z.uuid(),
           name: z.string(),
           color: z.string().nullable(),
+          icon: z.string().nullable(),
+          type: z.enum(['INCOME', 'EXPENSE']),
           userId: z.string().nullable(),
           createdAt: z.date(),
         }),
@@ -31,13 +35,15 @@ export async function updateCategory(app: FastifyInstance) {
   }, async (request) => {
     const userId = request.headers['x-user-id'] as string;
     const { id } = request.params;
-    const { name, color } = request.body;
+    const { name, color, icon, type } = request.body;
 
     const category = await prisma.category.update({
       where: { id, userId },
       data: {
         name,
         color,
+        icon,
+        type,
       },
     });
 

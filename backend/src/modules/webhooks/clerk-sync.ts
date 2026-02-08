@@ -72,7 +72,15 @@ export async function clerkSync(app: FastifyInstance) {
           id, 
           email: primaryEmail,
           name: fullName,
-          imageUrl: image_url
+          imageUrl: image_url,
+          accounts: {
+            create: {
+              name: 'Main Account',
+              balance: 0,
+              color: '#3b82f6',
+              icon: 'Bank'
+            }
+          }
         },
       });
     }

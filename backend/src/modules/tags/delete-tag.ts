@@ -12,7 +12,7 @@ export async function deleteTag(app: FastifyInstance) {
         'x-user-id': z.string().describe('Clerk User ID'),
       }),
       params: z.object({
-        id: z.string().uuid(),
+        id: z.uuid(),
       }),
       response: {
         204: z.null(),

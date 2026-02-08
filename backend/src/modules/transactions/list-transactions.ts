@@ -13,22 +13,27 @@ export async function listTransactions(app: FastifyInstance) {
       }),
       response: {
         200: z.array(z.object({
-          id: z.string().uuid(),
+          id: z.uuid(),
           userId: z.string(),
+          accountId: z.uuid(),
           amount: z.string(),
           type: z.enum(['INCOME', 'EXPENSE']),
           date: z.date(),
           description: z.string(),
           comments: z.string().nullable(),
-          categoryId: z.string().nullable(),
+          categoryId: z.uuid().nullable(),
           createdAt: z.date(),
           updatedAt: z.date(),
           category: z.object({
-            id: z.string(),
+            id: z.uuid(),
             name: z.string(),
           }).nullable(),
+          account: z.object({
+            id: z.uuid(),
+            name: z.string(),
+          }),
           tags: z.array(z.object({
-            id: z.string(),
+            id: z.uuid(),
             name: z.string(),
           })),
         })),
@@ -41,6 +46,7 @@ export async function listTransactions(app: FastifyInstance) {
       where: { userId },
       include: {
         category: { select: { id: true, name: true } },
+        account: { select: { id: true, name: true } },
         tags: { select: { id: true, name: true } },
       },
       orderBy: { date: 'desc' },

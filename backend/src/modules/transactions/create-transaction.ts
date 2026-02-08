@@ -16,24 +16,27 @@ export async function createTransaction(app: FastifyInstance) {
         type: z.enum(['INCOME', 'EXPENSE']),
         date: z.string().datetime(),
         description: z.string(),
+        accountId: z.uuid(),
         comments: z.string().optional(),
-        categoryId: z.string().uuid().optional(),
-        tagIds: z.array(z.string().uuid()).optional(),
+        categoryId: z.uuid().optional(),
+        tagIds: z.array(z.uuid()).optional(),
       }),
       response: {
         201: z.object({
-          id: z.string().uuid(),
+          id: z.uuid(),
           amount: z.string(),
+          accountId: z.uuid(),
         }),
       },
     },
   }, async (request, reply) => {
     const userId = request.headers['x-user-id'] as string;
-    const { amount, type, date, description, comments, categoryId, tagIds } = request.body;
+    const { amount, type, date, description, comments, categoryId, tagIds, accountId } = request.body;
 
     const transaction = await prisma.transaction.create({
       data: {
         userId,
+        accountId,
         amount,
         type,
         date: new Date(date),
@@ -49,6 +52,7 @@ export async function createTransaction(app: FastifyInstance) {
     return reply.status(201).send({
       id: transaction.id,
       amount: transaction.amount.toString(),
+      accountId: transaction.accountId,
     });
   });
 }

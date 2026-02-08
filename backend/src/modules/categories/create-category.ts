@@ -14,12 +14,16 @@ export async function createCategory(app: FastifyInstance) {
       body: z.object({
         name: z.string(),
         color: z.string().optional(),
+        icon: z.string().optional(),
+        type: z.enum(['INCOME', 'EXPENSE']).default('EXPENSE'),
       }),
       response: {
         201: z.object({
-          id: z.string().uuid(),
+          id: z.uuid(),
           name: z.string(),
           color: z.string().nullable(),
+          icon: z.string().nullable(),
+          type: z.enum(['INCOME', 'EXPENSE']),
           userId: z.string().nullable(),
           createdAt: z.date(),
         }),
@@ -27,12 +31,14 @@ export async function createCategory(app: FastifyInstance) {
     },
   }, async (request, reply) => {
     const userId = request.headers['x-user-id'] as string;
-    const { name, color } = request.body;
+    const { name, color, icon, type } = request.body;
 
     const category = await prisma.category.create({
       data: {
         name,
         color,
+        icon,
+        type,
         userId,
       },
     });

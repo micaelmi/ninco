@@ -13,7 +13,7 @@ export async function listTags(app: FastifyInstance) {
       }),
       response: {
         200: z.array(z.object({
-          id: z.string().uuid(),
+          id: z.uuid(),
           name: z.string(),
           userId: z.string(),
           createdAt: z.date(),
