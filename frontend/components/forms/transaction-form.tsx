@@ -10,6 +10,13 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import {
   Form,
   FormControl,
   FormDescription,
@@ -53,6 +60,8 @@ import {
   type TransactionFormValues,
 } from '@/lib/validations/transaction';
 import { cn } from '@/lib/utils';
+import { CategoryForm } from './category-form';
+import { IconRenderer } from '../ui/icon-renderer';
 
 interface TransactionFormProps {
   type: 'INCOME' | 'EXPENSE';
@@ -63,6 +72,7 @@ export function TransactionForm({ type, onSuccess }: TransactionFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [tagSearch, setTagSearch] = useState('');
+  const [isCategoryDialogOpen, setIsCategoryDialogOpen] = useState(false);
 
   const { data: accounts, isLoading: accountsLoading } = useAccounts();
   const { data: categories, isLoading: categoriesLoading } = useCategories();
@@ -85,6 +95,11 @@ export function TransactionForm({ type, onSuccess }: TransactionFormProps) {
     } catch (error) {
       console.error('Failed to create tag:', error);
     }
+  };
+
+  const onCategoryCreated = (categoryId: string) => {
+    form.setValue('categoryId', categoryId);
+    setIsCategoryDialogOpen(false);
   };
 
   const form = useForm<TransactionFormValues>({
@@ -267,8 +282,32 @@ export function TransactionForm({ type, onSuccess }: TransactionFormProps) {
           name="categoryId"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Category</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <div className="flex justify-between items-center">
+                <FormLabel>Category</FormLabel>
+                <Dialog open={isCategoryDialogOpen} onOpenChange={setIsCategoryDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="gap-1 hover:bg-primary/10 px-2 h-7 text-primary hover:text-primary text-xs transition-colors"
+                    >
+                      <Plus className="w-3 h-3" />
+                      New Category
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="bg-card sm:max-w-[425px]">
+                    <DialogHeader>
+                      <DialogTitle>Create New Category</DialogTitle>
+                    </DialogHeader>
+                    <CategoryForm 
+                      type={type} 
+                      onSuccess={onCategoryCreated}
+                      onCancel={() => setIsCategoryDialogOpen(false)} 
+                    />
+                  </DialogContent>
+                </Dialog>
+              </div>
+              <Select onValueChange={field.onChange} value={field.value || undefined}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a category" />
@@ -283,10 +322,12 @@ export function TransactionForm({ type, onSuccess }: TransactionFormProps) {
                     filteredCategories.map((category) => (
                       <SelectItem key={category.id} value={category.id}>
                         <div className="flex items-center gap-2">
-                          <span
-                            className="rounded-full w-3 h-3"
+                          <div 
+                            className="flex justify-center items-center rounded-full w-6 h-6 text-white"
                             style={{ backgroundColor: category.color }}
-                          />
+                          >
+                            <IconRenderer name={category.icon || 'HelpCircle'} className="w-3.5 h-3.5" />
+                          </div>
                           {category.name}
                         </div>
                       </SelectItem>

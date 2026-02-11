@@ -28,10 +28,12 @@ export async function listTransactions(app: FastifyInstance) {
           categoryId: z.uuid().nullable(),
           createdAt: z.coerce.date(),
           updatedAt: z.coerce.date(),
-          category: z.object({
+          category: z.nullable(z.object({
             id: z.uuid(),
             name: z.string(),
-          }).nullable(),
+            color: z.string().nullable(),
+            icon: z.string().nullable(),
+          })),
           account: z.object({
             id: z.uuid(),
             name: z.string(),
@@ -56,7 +58,7 @@ export async function listTransactions(app: FastifyInstance) {
         },
       },
       include: {
-        category: { select: { id: true, name: true } },
+        category: { select: { id: true, name: true, color: true, icon: true } },
         account: { select: { id: true, name: true } },
         tags: { select: { id: true, name: true } },
       },
