@@ -4,7 +4,7 @@ services:
     image: bitnami/postgresql:14 
     container_name: ninco-postgres-db
     ports:
-      - "5432:5432"  # Expose PostgreSQL port for development (remove in production)
+      - "5432:5432"  # Expose PostgreSQL port for development  (remove in production)
     restart: unless-stopped
     environment:
       - POSTGRES_USER=${DATABASE_USERNAME:-docker}
