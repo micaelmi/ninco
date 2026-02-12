@@ -8,7 +8,7 @@ import { Menu } from "lucide-react";
 
 export default function Header() {
     return (
-        <header className="top-0 right-0 left-0 z-50 fixed bg-lime-100/80 dark:bg-background/80 backdrop-blur-md border-border border-b w-full">
+        <header className="top-0 right-0 left-0 z-50 fixed bg-lime-100/70 supports-backdrop-filter:bg-lime-100/60 dark:bg-stone-900/70 dark:supports-backdrop-filter:bg-stone-900/60 backdrop-blur-xl border-border/50 border-b w-full">
             <div className="flex justify-between items-center mx-auto px-4 max-w-7xl h-16 font-mono text-sm container">
                 <Link href="/" className="flex items-center gap-2">
                     <Image
@@ -71,6 +71,12 @@ export default function Header() {
                                     </Link>
                                     <Link href="/transactions" className="font-medium hover:text-foreground text-lg">
                                         Transactions
+                                    </Link>
+                                    <Link href="/privacy" className="font-medium hover:text-foreground text-lg">
+                                        Privacy
+                                    </Link>
+                                    <Link href="/terms" className="font-medium hover:text-foreground text-lg">
+                                        Terms
                                     </Link>
                                     <div className="bg-border w-full h-px"></div>
                                     <div className="flex justify-between items-center gap-4">
