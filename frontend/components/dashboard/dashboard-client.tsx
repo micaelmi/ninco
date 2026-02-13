@@ -7,7 +7,14 @@ import {
   startOfMonth, 
   endOfMonth, 
   startOfYear, 
-  endOfYear
+  endOfYear,
+  addWeeks,
+  subWeeks,
+  addMonths,
+  subMonths,
+  addYears,
+  subYears,
+  format
 } from 'date-fns';
 import { 
   ArrowDownCircle, 
@@ -18,11 +25,13 @@ import {
   TrendingUp,
   TrendingDown,
   ArrowRight,
-  ArrowRightCircle
+  ArrowRightCircle,
+  Calendar as CalendarIcon
 } from "lucide-react";
 import Link from "next/link";
 
 import { OverviewChart } from "@/components/dashboard/overview-chart";
+import { CategoryDistributionChart } from "@/components/dashboard/category-distribution-chart";
 import { TimeRangeFilter, type TimeRange } from "./time-range-filter";
 import { AccountSummaryPopover } from "./account-summary-popover";
 import { IconRenderer } from "../ui/icon-renderer";
@@ -43,28 +52,33 @@ import Image from 'next/image';
 export function DashboardClient({ userName }: { userName: string }) {
   const [mounted, setMounted] = useState(false);
   const [timeRange, setTimeRange] = useState<TimeRange>('week');
+  const [baseDate, setBaseDate] = useState(new Date());
+  const [customRange, setCustomRange] = useState<{ from: Date; to: Date } | undefined>();
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
   const filters = useMemo(() => {
-    const now = new Date();
     let start: Date;
     let end: Date;
 
     switch (timeRange) {
       case 'week':
-        start = startOfWeek(now, { weekStartsOn: 1 });
-        end = endOfWeek(now, { weekStartsOn: 1 });
+        start = startOfWeek(baseDate, { weekStartsOn: 1 });
+        end = endOfWeek(baseDate, { weekStartsOn: 1 });
         break;
       case 'month':
-        start = startOfMonth(now);
-        end = endOfMonth(now);
+        start = startOfMonth(baseDate);
+        end = endOfMonth(baseDate);
         break;
       case 'year':
-        start = startOfYear(now);
-        end = endOfYear(now);
+        start = startOfYear(baseDate);
+        end = endOfYear(baseDate);
+        break;
+      case 'custom':
+        start = customRange?.from || startOfMonth(new Date());
+        end = customRange?.to || endOfMonth(new Date());
         break;
     }
 
@@ -72,7 +86,47 @@ export function DashboardClient({ userName }: { userName: string }) {
       from: start.toISOString(),
       to: end.toISOString(),
     };
-  }, [timeRange]);
+  }, [timeRange, baseDate, customRange]);
+
+  const navigationLabel = useMemo(() => {
+    const now = new Date();
+    switch (timeRange) {
+      case 'week':
+        if (startOfWeek(baseDate, { weekStartsOn: 1 }).getTime() === startOfWeek(now, { weekStartsOn: 1 }).getTime()) {
+          return 'THIS WEEK';
+        }
+        return `Week of ${format(startOfWeek(baseDate, { weekStartsOn: 1 }), 'MMM d')}`;
+      case 'month':
+        if (startOfMonth(baseDate).getTime() === startOfMonth(now).getTime()) {
+          return 'THIS MONTH';
+        }
+        return format(baseDate, 'MMMM yyyy');
+      case 'year':
+        if (startOfYear(baseDate).getTime() === startOfYear(now).getTime()) {
+          return 'THIS YEAR';
+        }
+        return format(baseDate, 'yyyy');
+      case 'custom':
+        if (customRange?.from && customRange?.to) {
+          return `${format(customRange.from, 'MMM d')} - ${format(customRange.to, 'MMM d')}`;
+        }
+        return 'Custom Range';
+    }
+  }, [timeRange, baseDate, customRange]);
+
+  const handleNavigate = (direction: 'prev' | 'next') => {
+    switch (timeRange) {
+      case 'week':
+        setBaseDate(prev => direction === 'next' ? addWeeks(prev, 1) : subWeeks(prev, 1));
+        break;
+      case 'month':
+        setBaseDate(prev => direction === 'next' ? addMonths(prev, 1) : subMonths(prev, 1));
+        break;
+      case 'year':
+        setBaseDate(prev => direction === 'next' ? addYears(prev, 1) : subYears(prev, 1));
+        break;
+    }
+  };
 
   const { data: summary, isLoading: summaryLoading } = useDashboardSummary(filters);
   const { data: transactions, isLoading: transactionsLoading } = useTransactions(filters);
@@ -103,25 +157,35 @@ export function DashboardClient({ userName }: { userName: string }) {
             className="hidden md:block -scale-x-100"
             priority
           />
-          <div>
+          <div className="px-2 md:px-0">
           <h1 className="font-bold text-3xl tracking-tight">Welcome back, {userName}!</h1>
           <p className="text-muted-foreground">Here&apos;s what&apos;s happening with your finances today.</p>
         </div>
         </div>
-        <div className="flex flex-wrap items-center gap-3">
-          <TimeRangeFilter value={timeRange} onChange={setTimeRange} />
-          <div className="flex justify-center items-center gap-2 w-full md:w-fit">
-            <Button className="w-1/2 md:w-fit" asChild size="sm">
+        <div className="flex flex-col flex-wrap justify-center md:justify-end items-center gap-3">
+          <TimeRangeFilter 
+            value={timeRange} 
+            onChange={(val) => {
+              setTimeRange(val);
+              setBaseDate(new Date()); // Reset to now when switching presets
+            }} 
+            onNavigate={handleNavigate}
+            label={navigationLabel}
+            customRange={customRange}
+            onCustomRangeChange={setCustomRange}
+          />
+          {/* <div className="flex justify-center items-center gap-2 px-2 w-full">
+            <Button className="w-1/2 max-w-[200px]" asChild size="sm">
               <Link href="/transactions/income">
                 <PlusCircle className="mr-2 w-4 h-4" /> Income
               </Link>
             </Button>
-            <Button className="w-1/2 md:w-fit" variant="outline" asChild size="sm">
+            <Button className="w-1/2 max-w-[200px]" variant="outline" asChild size="sm">
               <Link href="/transactions/expense">
                 <PlusCircle className="mr-2 w-4 h-4" /> Expense
               </Link>
             </Button>
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -150,13 +214,20 @@ export function DashboardClient({ userName }: { userName: string }) {
             <CardTitle className="font-medium text-sm">Income</CardTitle>
             <ArrowUpCircle className="w-4 h-4 text-primary" />
           </CardHeader>
-          <CardContent>
-            <div className="flex items-baseline gap-1 font-mono font-bold text-primary text-3xl">
+          <CardContent className="flex flex-row justify-between items-end space-y-0 pb-2">
+            <div>
+              <div className="flex items-baseline gap-1 font-mono font-bold text-primary text-3xl">
               +${summary?.income.toLocaleString(undefined, { minimumFractionDigits: 2 })}
             </div>
             <p className="flex items-center gap-1 mt-1 text-muted-foreground text-xs">
               <TrendingUp className="w-3 h-3" /> Your earnings
             </p>
+            </div>
+            <Button asChild size="sm">
+              <Link href="/transactions/income">
+                <PlusCircle className="w-4 h-4" />
+              </Link>
+            </Button>
           </CardContent>
         </Card>
 
@@ -165,38 +236,25 @@ export function DashboardClient({ userName }: { userName: string }) {
             <CardTitle className="font-medium text-sm">Expenses</CardTitle>
             <ArrowDownCircle className="w-4 h-4 text-destructive" />
           </CardHeader>
-          <CardContent>
+          <CardContent className="flex flex-row justify-between items-end space-y-0 pb-2">
+            <div>
             <div className="font-mono font-bold text-destructive text-3xl">
               -${summary?.expense.toLocaleString(undefined, { minimumFractionDigits: 2 })}
             </div>
             <p className="flex items-center gap-1 mt-1 text-muted-foreground text-xs">
               <TrendingDown className="w-3 h-3" /> Your expenses
             </p>
+            </div>
+            <Button className="bg-destructive hover:bg-destructive/80" asChild size="sm">
+              <Link href="/transactions/expense">
+                <PlusCircle className="w-4 h-4" />
+              </Link>
+            </Button>
           </CardContent>
         </Card>
       </div>
 
       <div className="gap-8 grid grid-cols-1 lg:grid-cols-7">
-        {/* Chart Area */}
-        <Card className="col-span-1 lg:col-span-4 shadow-sm border-2">
-          <CardHeader>
-            <CardTitle className="flex justify-between items-center">
-              Overview
-              <span className="bg-muted px-2 py-1 rounded font-normal text-muted-foreground text-xs uppercase tracking-widest">
-                {timeRange}
-              </span>
-            </CardTitle>
-            <CardDescription>
-              {timeRange === 'year' ? 'Monthly' : 'Daily'} breakdown of finances.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="pl-2">
-            <div className="h-[300px]">
-              <OverviewChart data={summary?.chartData || []} />
-            </div>
-          </CardContent>
-        </Card>
-
         {/* Recent Transactions */}
         <Card className="col-span-1 lg:col-span-3 shadow-sm border-2">
           <CardHeader className="flex flex-row justify-between items-center space-y-0">
@@ -274,6 +332,41 @@ export function DashboardClient({ userName }: { userName: string }) {
             </div>
           </CardContent>
         </Card>
+        
+        {/* Chart Area */}
+        <Card className="col-span-1 lg:col-span-4 shadow-sm border-2">
+          <CardHeader>
+            <CardTitle className="flex justify-between items-center">
+              Overview
+              <span className="bg-muted px-2 py-1 rounded font-normal text-muted-foreground text-xs uppercase tracking-widest">
+                {timeRange}
+              </span>
+            </CardTitle>
+            <CardDescription>
+              {timeRange === 'year' ? 'Monthly' : 'Daily'} breakdown of finances.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="pl-2">
+            <div className="h-[300px]">
+              <OverviewChart data={summary?.chartData || []} />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="gap-8 grid grid-cols-1 lg:grid-cols-2">
+        <CategoryDistributionChart 
+          title="Income Distribution" 
+          description="Where your money comes from."
+          data={summary?.categoryIncome || []}
+          loading={summaryLoading}
+        />
+        <CategoryDistributionChart 
+          title="Expense Distribution" 
+          description="Where your money goes."
+          data={summary?.categoryExpense || []}
+          loading={summaryLoading}
+        />
       </div>
     </div>
   );

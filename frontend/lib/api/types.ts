@@ -154,4 +154,16 @@ export interface DashboardSummary {
     balance: number;
     color: string;
   }[];
+  categoryIncome: {
+    id: string;
+    name: string;
+    value: number;
+    color: string;
+  }[];
+  categoryExpense: {
+    id: string;
+    name: string;
+    value: number;
+    color: string;
+  }[];
 }

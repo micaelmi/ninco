@@ -321,6 +321,7 @@ export function TransactionForm({ type: propsType, initialData, transactionId, o
                 <Dialog open={isCategoryDialogOpen} onOpenChange={setIsCategoryDialogOpen}>
                   <DialogTrigger asChild>
                     <Button 
+                      type="button"
                       variant="ghost" 
                       size="sm" 
                       className="gap-1 hover:bg-primary/10 px-2 h-7 text-primary hover:text-primary text-xs transition-colors"
@@ -499,14 +500,14 @@ export function TransactionForm({ type: propsType, initialData, transactionId, o
               if (onSuccess) onSuccess();
               else router.push('/home');
             }}
-            className="flex-1"
+            className="flex-1 dark:hover:text-white cursor-pointer"
           >
             Cancel
           </Button>
           <Button
             type="submit"
             disabled={isSubmitting || accountsLoading}
-            className="flex-1"
+            className="flex-1 cursor-pointer"
           >
             {isSubmitting ? (
               <>

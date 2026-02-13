@@ -32,6 +32,18 @@ export async function getDashboardSummary(app: FastifyInstance) {
             balance: z.number(),
             color: z.string(),
           })),
+          categoryIncome: z.array(z.object({
+            id: z.string(),
+            name: z.string(),
+            value: z.number(),
+            color: z.string(),
+          })),
+          categoryExpense: z.array(z.object({
+            id: z.string(),
+            name: z.string(),
+            value: z.number(),
+            color: z.string(),
+          })),
         }),
       },
     },
@@ -61,15 +73,35 @@ export async function getDashboardSummary(app: FastifyInstance) {
           lte: endDate,
         },
       },
+      include: {
+        category: true,
+      },
     });
 
     let totalIncome = 0;
     let totalExpense = 0;
+    const incomeCategories: Record<string, { id: string; name: string; value: number; color: string }> = {};
+    const expenseCategories: Record<string, { id: string; name: string; value: number; color: string }> = {};
 
     transactions.forEach(t => {
       const amount = t.amount.toNumber();
-      if (t.type === 'INCOME') totalIncome += amount;
-      else totalExpense += amount;
+      const categoryId = t.categoryId || 'uncategorized';
+      const categoryName = t.category?.name || 'Uncategorized';
+      const categoryColor = t.category?.color || '#94a3b8';
+
+      if (t.type === 'INCOME') {
+        totalIncome += amount;
+        if (!incomeCategories[categoryId]) {
+          incomeCategories[categoryId] = { id: categoryId, name: categoryName, value: 0, color: categoryColor };
+        }
+        incomeCategories[categoryId].value += amount;
+      } else {
+        totalExpense += amount;
+        if (!expenseCategories[categoryId]) {
+          expenseCategories[categoryId] = { id: categoryId, name: categoryName, value: 0, color: categoryColor };
+        }
+        expenseCategories[categoryId].value += amount;
+      }
     });
 
     // 3. Chart Data
@@ -108,6 +140,8 @@ export async function getDashboardSummary(app: FastifyInstance) {
         ...a,
         balance: a.balance.toNumber(),
       })),
+      categoryIncome: Object.values(incomeCategories).sort((a, b) => b.value - a.value),
+      categoryExpense: Object.values(expenseCategories).sort((a, b) => b.value - a.value),
     };
   });
 }

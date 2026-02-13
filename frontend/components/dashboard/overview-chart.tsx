@@ -16,14 +16,12 @@ export function OverviewChart({ data }: OverviewChartProps) {
       <BarChart data={data}>
         <XAxis
           dataKey="period"
-          stroke="var(--muted-foreground)"
-          fontSize={12}
+          tick={{ fill: 'var(--muted-foreground)', fontSize: 12 }}
           tickLine={false}
           axisLine={false}
         />
         <YAxis
-          stroke="var(--muted-foreground)"
-          fontSize={12}
+          tick={{ fill: 'var(--muted-foreground)', fontSize: 12 }}
           tickLine={false}
           axisLine={false}
           tickFormatter={(value) => `$${value}`}
