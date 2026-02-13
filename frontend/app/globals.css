@@ -130,8 +130,8 @@
   --muted-foreground: #A8A29E; /* stone-400 */
 
   /* Accent */
-  --accent:      #FDE047;
-  --accent-foreground: #422006;
+  --accent:      #292524; /* stone-800 */
+  --accent-foreground: #FDE047; /* Cockatiel Yellow */
 
   /* Destructive */
   --destructive: #FB923C; /* Orange-400 */
@@ -158,8 +158,8 @@
   --sidebar-foreground: #F5F5F4;
   --sidebar-primary: #34D399;
   --sidebar-primary-foreground: #064E3B;
-  --sidebar-accent: #FDE047;
-  --sidebar-accent-foreground: #422006;
+  --sidebar-accent: #292524;
+  --sidebar-accent-foreground: #FDE047;
   --sidebar-border: #44403C;
   --sidebar-ring: #34D399;
 }
