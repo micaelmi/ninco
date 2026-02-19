@@ -15,6 +15,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { CustomFormInput } from '@/components/ui/custom-form-input';
 import { useCreateCategory, useUpdateCategory } from '@/lib/hooks/use-categories';
 import { categoryFormSchema, type CategoryFormValues } from '@/lib/validations/category';
@@ -89,6 +90,41 @@ export function CategoryForm({ type, initialData, categoryId, onSuccess, onCance
           name="name"
           label="Category Name"
           placeholder="e.g. Groceries, Salary..."
+        />
+
+        <FormField
+          control={form.control}
+          name="type"
+          render={({ field }) => (
+            <FormItem className="space-y-3">
+              <FormLabel>Type</FormLabel>
+              <FormControl>
+                <RadioGroup
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  className="flex space-x-4"
+                >
+                  <FormItem className="flex items-center space-x-3 space-y-0">
+                    <FormControl>
+                      <RadioGroupItem value="EXPENSE" />
+                    </FormControl>
+                    <FormLabel className="font-normal cursor-pointer">
+                      Expense
+                    </FormLabel>
+                  </FormItem>
+                  <FormItem className="flex items-center space-x-3 space-y-0">
+                    <FormControl>
+                      <RadioGroupItem value="INCOME" />
+                    </FormControl>
+                    <FormLabel className="font-normal cursor-pointer">
+                      Income
+                    </FormLabel>
+                  </FormItem>
+                </RadioGroup>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
 
         <div className="space-y-4">

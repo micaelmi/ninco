@@ -60,7 +60,7 @@ export function DashboardClient({ userName }: { userName: string }) {
         <div className="flex items-center gap-4">
           <Image
             src="/mascot.png"
-            alt="Cockatiel"
+            alt="Mascot"
             width={80}
             height={80}
             className="hidden md:block -scale-x-100"
