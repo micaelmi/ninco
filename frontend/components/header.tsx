@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/mode-toggle";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
+import { FeedbackDialog } from "@/components/feedback-dialog";
 
 export default function Header() {
     return (
@@ -30,9 +31,14 @@ export default function Header() {
                              <Link href="/home" className="font-medium hover:text-foreground text-sm transition-colors">
                                 Dashboard
                             </Link>
-                             <Link href="/transactions" className="font-medium hover:text-foreground text-sm transition-colors">
+                            <Link href="/transactions" className="font-medium hover:text-foreground text-sm transition-colors">
                                 Transactions
                             </Link>
+                            <FeedbackDialog>
+                                <button type="button" className="font-medium hover:text-foreground text-sm transition-colors cursor-pointer">
+                                    Feedback
+                                </button>
+                            </FeedbackDialog>
                         </div>
                         <div className="mx-2 bg-border w-px h-6"></div>
                         <div className="flex items-center gap-2">
@@ -72,12 +78,11 @@ export default function Header() {
                                     <Link href="/transactions" className="font-medium hover:text-foreground text-lg">
                                         Transactions
                                     </Link>
-                                    <Link href="/privacy" className="font-medium hover:text-foreground text-lg">
-                                        Privacy
-                                    </Link>
-                                    <Link href="/terms" className="font-medium hover:text-foreground text-lg">
-                                        Terms
-                                    </Link>
+                                    <FeedbackDialog>
+                                        <button type="button" className="font-medium hover:text-foreground text-lg text-left cursor-pointer">
+                                            Feedback
+                                        </button>
+                                    </FeedbackDialog>
                                     <div className="bg-border w-full h-px"></div>
                                     <div className="flex justify-between items-center gap-4">
                                         <span className="font-medium text-muted-foreground">Theme</span>
@@ -90,6 +95,16 @@ export default function Header() {
                                                 avatarBox: "w-8 h-8 focus:ring-2 focus:ring-ring focus:outline-none rounded-full"
                                             }
                                         }} />
+                                    </div>
+                                    <div className="bg-border w-full h-px"></div>
+                                    <div className="flex gap-4 mt-4">
+                                        <Link href="/privacy" className="text-muted-foreground hover:text-foreground text-sm">
+                                            Privacy
+                                        </Link>
+                                        <span className="text-sm">&</span>
+                                        <Link href="/terms" className="text-muted-foreground hover:text-foreground text-sm">
+                                            Terms
+                                        </Link>
                                     </div>
                                 </div>
                             </SheetContent>

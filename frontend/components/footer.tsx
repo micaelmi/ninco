@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Github, Mail } from "lucide-react";
+import { FeedbackDialog } from "@/components/feedback-dialog";
 
 export default function Footer() {
   return (
@@ -37,6 +38,14 @@ export default function Footer() {
             <Link href="/manage" className="text-muted-foreground hover:text-primary transition-colors">
               Categories & Tags
             </Link>
+            <FeedbackDialog>
+              <button 
+                type="button"
+                className="text-muted-foreground hover:text-primary transition-colors cursor-pointer"
+              >
+                Feedback
+              </button>
+            </FeedbackDialog>
           </nav>
 
           {/* Social & Contact */}

@@ -6,6 +6,8 @@ import { transactionRoutes } from './transactions';
 import { webhookRoutes } from './webhooks';
 import { accountRoutes } from './accounts';
 
+import { feedbackRoutes } from './feedback/feedback.routes';
+
 export async function appRoutes(app: FastifyInstance) {
   // Webhooks and health check are public — registered before auth
   app.register(webhookRoutes, { prefix: '/webhooks' });
@@ -21,5 +23,6 @@ export async function appRoutes(app: FastifyInstance) {
     protectedApp.register(categoryRoutes);
     protectedApp.register(tagRoutes);
     protectedApp.register(transactionRoutes);
+    protectedApp.register(feedbackRoutes, { prefix: '/feedback' });
   });
 }
