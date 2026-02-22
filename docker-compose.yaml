@@ -17,12 +17,28 @@ services:
     env_file:
       - .env  # Load environment variables from the .env file
 
+  caddy:
+    profiles: [prod]
+    image: caddy:2-alpine
+    container_name: ninco-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - ninco-network
+    depends_on:
+      - ninco-frontend
+      - ninco-backend
+
   ninco-backend:
     profiles: [prod]
     build: ./backend
     container_name: ninco-backend
-    ports:
-      - "3333:3333"
     restart: unless-stopped
     depends_on:
       - ninco-postgres-db
@@ -40,8 +56,6 @@ services:
         - NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
         - NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
     container_name: ninco-frontend
-    ports:
-      - "3000:3000"
     restart: unless-stopped
     depends_on:
       - ninco-backend
@@ -53,6 +67,8 @@ services:
 volumes:
   ninco_db_volume:
     driver: local  # Specify the volume driver for local persistence
+  caddy_data:
+  caddy_config:
 
 networks:
   ninco-network:

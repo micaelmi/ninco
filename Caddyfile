@@ -1,0 +1,15 @@
+# Caddyfile
+# This file configures the Caddy web server to act as a reverse proxy
+# and automatically handle HTTPS/SSL certificates.
+
+ninco.app {
+    reverse_proxy ninco-frontend:3000
+}
+
+api.ninco.app {
+    reverse_proxy ninco-backend:3333
+}
+
+www.ninco.app {
+    redir https://ninco.app{uri}
+}
