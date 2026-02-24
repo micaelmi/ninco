@@ -4,11 +4,6 @@
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "baseUrl": ".",
-    "paths": {
-      "*": [
-        "node_modules/*"
-      ]
-    },
     "resolveJsonModule": true,
     "allowJs": true,
     "checkJs": false,
