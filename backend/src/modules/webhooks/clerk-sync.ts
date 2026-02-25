@@ -3,8 +3,6 @@ import { Webhook } from 'svix';
 import { prisma } from '../../lib/prisma';
 import { env } from '../../lib/env';
 
-import fastifyRawBody from 'fastify-raw-body';
-
 interface ClerkWebhookEvent {
   type: string;
   data: {
@@ -17,23 +15,15 @@ interface ClerkWebhookEvent {
   };
 }
 
-// Add a type declaration for FastifyRequest to include rawBody
-declare module 'fastify' {
-  interface FastifyRequest {
-    rawBody?: string | Buffer;
-  }
-}
-
 export async function clerkSync(app: FastifyInstance) {
-  // Register raw body plugin specifically for webhooks
-  app.register(fastifyRawBody, {
-    field: 'rawBody',
-    global: false,
-    encoding: 'utf8',
-    runFirst: true,
+  // Tells Fastify not to parse JSON automatically for this specific plugin scope
+  // By parsing as 'string', request.body will be the exact raw string sent by Clerk
+  app.removeAllContentTypeParsers();
+  app.addContentTypeParser('application/json', { parseAs: 'string' }, function (req, body, done) {
+    done(null, body);
   });
 
-  app.post('/clerk', { config: { rawBody: true } }, async (request, reply) => {
+  app.post('/clerk', async (request, reply) => {
     const headers = request.headers;
     const svix_id = headers['svix-id'] as string;
     const svix_timestamp = headers['svix-timestamp'] as string;
@@ -43,11 +33,11 @@ export async function clerkSync(app: FastifyInstance) {
       return reply.status(400).send({ error: 'Missing svix headers' });
     }
 
-    // We must pass the raw body verbatim to Svix because JSON.stringify alters whitespace
-    const body = request.rawBody as string;
+    // Since we overrode the parser above, this is guaranteed to be the raw text string!
+    const bodyText = request.body as string;
 
-    if (!body) {
-      return reply.status(400).send({ error: 'Missing raw body' });
+    if (!bodyText) {
+      return reply.status(400).send({ error: 'Missing raw body. Ensure request is sent with a body.' });
     }
 
     const wh = new Webhook(env.CLERK_WEBHOOK_SECRET);
@@ -55,7 +45,7 @@ export async function clerkSync(app: FastifyInstance) {
     let evt: ClerkWebhookEvent;
 
     try {
-      evt = wh.verify(body, {
+      evt = wh.verify(bodyText, {
         'svix-id': svix_id,
         'svix-timestamp': svix_timestamp,
         'svix-signature': svix_signature,
