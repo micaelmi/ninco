@@ -3,6 +3,8 @@ import { Webhook } from 'svix';
 import { prisma } from '../../lib/prisma';
 import { env } from '../../lib/env';
 
+import fastifyRawBody from 'fastify-raw-body';
+
 interface ClerkWebhookEvent {
   type: string;
   data: {
@@ -15,8 +17,23 @@ interface ClerkWebhookEvent {
   };
 }
 
+// Add a type declaration for FastifyRequest to include rawBody
+declare module 'fastify' {
+  interface FastifyRequest {
+    rawBody?: string | Buffer;
+  }
+}
+
 export async function clerkSync(app: FastifyInstance) {
-  app.post('/clerk', async (request, reply) => {
+  // Register raw body plugin specifically for webhooks
+  app.register(fastifyRawBody, {
+    field: 'rawBody',
+    global: false,
+    encoding: 'utf8',
+    runFirst: true,
+  });
+
+  app.post('/clerk', { config: { rawBody: true } }, async (request, reply) => {
     const headers = request.headers;
     const svix_id = headers['svix-id'] as string;
     const svix_timestamp = headers['svix-timestamp'] as string;
@@ -26,8 +43,12 @@ export async function clerkSync(app: FastifyInstance) {
       return reply.status(400).send({ error: 'Missing svix headers' });
     }
 
-    const payload = request.body;
-    const body = JSON.stringify(payload);
+    // We must pass the raw body verbatim to Svix because JSON.stringify alters whitespace
+    const body = request.rawBody as string;
+
+    if (!body) {
+      return reply.status(400).send({ error: 'Missing raw body' });
+    }
 
     const wh = new Webhook(env.CLERK_WEBHOOK_SECRET);
 
