@@ -17,9 +17,9 @@ interface ClerkWebhookEvent {
 
 export async function clerkSync(app: FastifyInstance) {
   // Tells Fastify not to parse JSON automatically for this specific plugin scope
-  // By parsing as 'string', request.body will be the exact raw string sent by Clerk
+  // By parsing as 'buffer', request.body will be the exact raw byte stream
   app.removeAllContentTypeParsers();
-  app.addContentTypeParser('application/json', { parseAs: 'string' }, function (req, body, done) {
+  app.addContentTypeParser('application/json', { parseAs: 'buffer' }, function (req, body, done) {
     done(null, body);
   });
 
@@ -33,13 +33,14 @@ export async function clerkSync(app: FastifyInstance) {
       return reply.status(400).send({ error: 'Missing svix headers' });
     }
 
-    // Since we overrode the parser above, this is guaranteed to be the raw text string!
-    const bodyText = request.body as string;
-
-    if (!bodyText) {
+    // Convert raw buffer back to string to preserve EXACT formatting/spaces from payload
+    const bodyBuffer = request.body as Buffer;
+    
+    if (!bodyBuffer) {
       return reply.status(400).send({ error: 'Missing raw body. Ensure request is sent with a body.' });
     }
 
+    const bodyText = bodyBuffer.toString('utf8');
     const wh = new Webhook(env.CLERK_WEBHOOK_SECRET);
 
     let evt: ClerkWebhookEvent;
@@ -51,7 +52,13 @@ export async function clerkSync(app: FastifyInstance) {
         'svix-signature': svix_signature,
       }) as ClerkWebhookEvent;
     } catch (err) {
-      request.log.error(err, 'Error verifying webhook');
+      request.log.error({ 
+        err: (err as Error).message, 
+        receivedSecretPrefix: env.CLERK_WEBHOOK_SECRET.substring(0, 10),
+        svix_id,
+        svix_signature,
+        bodyText
+      }, 'Webhook verification failed!');
       return reply.status(400).send({ error: 'Invalid signature' });
     }
 
