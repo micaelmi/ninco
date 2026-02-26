@@ -24,36 +24,24 @@ export async function clerkSync(app: FastifyInstance) {
   });
 
   app.post('/clerk', async (request, reply) => {
-    console.log('[Webhook] Incoming request received');
-
     const headers = request.headers;
     const svix_id = headers['svix-id'] as string;
     const svix_timestamp = headers['svix-timestamp'] as string;
     const svix_signature = headers['svix-signature'] as string;
 
-    console.log('[Webhook] Headers:', { svix_id, svix_timestamp, svix_signature: svix_signature?.substring(0, 20) + '...' });
-
     if (!svix_id || !svix_timestamp || !svix_signature) {
-      console.log('[Webhook] Missing svix headers!');
       return reply.status(400).send({ error: 'Missing svix headers' });
     }
 
-    // Convert raw buffer back to string to preserve EXACT formatting/spaces from payload
+    // Convert raw buffer back to string to preserve EXACT formatting from payload
     const bodyBuffer = request.body as Buffer;
     
     if (!bodyBuffer) {
-      return reply.status(400).send({ error: 'Missing raw body. Ensure request is sent with a body.' });
+      return reply.status(400).send({ error: 'Missing raw body' });
     }
 
     const bodyText = bodyBuffer.toString('utf8');
-    
-    const secret = env.CLERK_WEBHOOK_SECRET;
-    console.log('[Webhook] Secret prefix:', secret.substring(0, 12) + '...');
-    console.log('[Webhook] Secret length:', secret.length);
-    console.log('[Webhook] Body length:', bodyText.length);
-    console.log('[Webhook] Body preview:', bodyText.substring(0, 80) + '...');
-    
-    const wh = new Webhook(secret);
+    const wh = new Webhook(env.CLERK_WEBHOOK_SECRET);
 
     let evt: ClerkWebhookEvent;
 
@@ -64,7 +52,7 @@ export async function clerkSync(app: FastifyInstance) {
         'svix-signature': svix_signature,
       }) as ClerkWebhookEvent;
     } catch (err) {
-      console.error('[Webhook] VERIFICATION FAILED:', (err as Error).message);
+      console.error('[Webhook] Verification failed:', (err as Error).message);
       return reply.status(400).send({ error: 'Invalid signature' });
     }
 
