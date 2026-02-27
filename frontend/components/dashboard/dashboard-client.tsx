@@ -20,9 +20,6 @@ import { SummaryCard } from "./summary-card";
 import { IconRenderer } from "../ui/icon-renderer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow, MotionTableBody, MotionTableRow,
-} from "@/components/ui/table";
 import { useTransactions, useDashboardSummary } from "@/lib/hooks/use-transactions";
 import { useDateRange } from "@/lib/hooks/use-date-range";
 import { cn } from "@/lib/utils";
@@ -173,61 +170,56 @@ export function DashboardClient({ userName }: { userName: string }) {
             </Button>
           </CardHeader>
           <CardContent>
-            <div className="max-h-[350px] overflow-auto">
-              <Table>
-                <TableHeader className="top-0 z-10 sticky bg-background">
-                  <TableRow>
-                    <TableHead>Transaction</TableHead>
-                    <TableHead className="text-right">Amount</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <MotionTableBody
-                  variants={staggerContainer}
-                  initial="hidden"
-                  animate="visible"
-                >
-                  {transactions?.data && transactions.data.length > 0 ? (
-                    transactions.data.map((transaction) => (
-                      <MotionTableRow key={transaction.id} className="group transition-colors" variants={slideUp}>
-                        <TableCell className="py-3">
-                          <div className="flex flex-col">
-                            <span className="font-medium group-hover:text-primary text-sm transition-colors">
-                              {transaction.description}
+            <div className="pr-2 max-h-[350px] overflow-x-hidden overflow-y-auto">
+              <MotionDiv
+                variants={staggerContainer}
+                initial="hidden"
+                animate="visible"
+                className="flex flex-col gap-2"
+              >
+                {transactions?.data && transactions.data.length > 0 ? (
+                  transactions.data.map((transaction) => (
+                    <MotionDiv 
+                      key={transaction.id} 
+                      className="group flex justify-between items-center bg-card hover:bg-muted/50 shadow-sm p-3 border rounded-xl text-card-foreground transition-colors" 
+                      variants={slideUp}
+                    >
+                      <div className="flex items-center gap-3 overflow-hidden">
+                        <div
+                          className="flex justify-center items-center rounded-full w-10 h-10 text-white shrink-0"
+                          style={{ backgroundColor: transaction.category?.color || '#94a3b8' }}
+                        >
+                          <IconRenderer name={transaction.category?.icon || 'HelpCircle'} className="w-5 h-5" />
+                        </div>
+                        <div className="flex flex-col overflow-hidden">
+                          <span className="font-medium group-hover:text-primary text-sm truncate transition-colors">
+                            {transaction.description}
+                          </span>
+                          <div className="flex items-center gap-1.5 mt-0.5">
+                            <span className="bg-muted px-1.5 py-0.5 rounded font-medium text-[10px] text-muted-foreground truncate">
+                              {transaction.category?.name || 'Uncategorized'}
                             </span>
-                            <div className="flex items-center gap-2 mt-1">
-                              <div
-                                className="flex justify-center items-center rounded-full w-5 h-5 text-white"
-                                style={{ backgroundColor: transaction.category?.color || '#94a3b8' }}
-                              >
-                                <IconRenderer name={transaction.category?.icon || 'HelpCircle'} className="w-3 h-3" />
-                              </div>
-                              <span className="bg-muted px-1.5 py-0.5 rounded font-medium text-[10px] text-muted-foreground">
-                                {transaction.category?.name || 'Uncategorized'}
-                              </span>
-                              <span className="font-mono text-[9px] text-muted-foreground/60 uppercase">
-                                {new Date(transaction.date).toLocaleDateString()}
-                              </span>
-                            </div>
+                            <span className="font-mono text-[10px] text-muted-foreground/60 uppercase shrink-0">
+                              {new Date(transaction.date).toLocaleDateString()}
+                            </span>
                           </div>
-                        </TableCell>
-                        <TableCell className={cn(
-                          "font-mono font-bold text-right",
-                          transaction.type === 'INCOME' ? 'text-primary' : 'text-destructive'
-                        )}>
-                          {transaction.type === 'INCOME' ? '+' : '-'}
-                          {formatCurrency(parseFloat(transaction.amount))}
-                        </TableCell>
-                      </MotionTableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan={2} className="py-12 text-muted-foreground text-sm text-center italic">
-                        No transactions found for this period.
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </MotionTableBody>
-              </Table>
+                        </div>
+                      </div>
+                      <div className={cn(
+                        "ml-2 font-mono font-bold text-right shrink-0",
+                        transaction.type === 'INCOME' ? 'text-primary' : 'text-destructive'
+                      )}>
+                        {transaction.type === 'INCOME' ? '+' : '-'}
+                        {formatCurrency(parseFloat(transaction.amount))}
+                      </div>
+                    </MotionDiv>
+                  ))
+                ) : (
+                  <div className="bg-card py-12 border rounded-xl text-muted-foreground text-sm text-center italic">
+                    No transactions found for this period.
+                  </div>
+                )}
+              </MotionDiv>
             </div>
             <div className="mt-4">
               <Button variant="outline" className="w-full text-muted-foreground hover:text-primary transition-colors" asChild>

@@ -1,8 +1,8 @@
 "use client";
 
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
+import { cn, formatCurrency } from "@/lib/utils";
 
 interface CategoryDistributionChartProps {
   title: string;
@@ -45,60 +45,70 @@ export function CategoryDistributionChart({
         {description && <CardDescription>{description}</CardDescription>}
       </CardHeader>
       <CardContent>
-        <div className="h-[300px]">
+        <div className="flex md:flex-row flex-col h-auto md:h-[300px]">
           {data.length > 0 ? (
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={data}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={60}
-                  outerRadius={80}
-                  paddingAngle={5}
-                  dataKey="value"
-                  nameKey="name"
-                  stroke="var(--card)"
-                  strokeWidth={2}
-                >
-                  {data.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip
-                  formatter={(value: number) => `$${value.toLocaleString()}`}
-                  contentStyle={{
-                    backgroundColor: "var(--popover)",
-                    borderRadius: "8px",
-                    border: "1px solid var(--border)",
-                    boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
-                    color: "var(--popover-foreground)",
-                  }}
-                  itemStyle={{ color: "var(--popover-foreground)" }}
-                />
-                <Legend 
-                  verticalAlign="bottom" 
-                  height={36}
-                  content={({ payload }) => (
-                    <div className="flex flex-wrap justify-center gap-4 mt-4 max-h-[100px] overflow-y-auto">
-                      {payload?.map((entry: any, index: number) => (
-                        <div key={`legend-${index}`} className="flex items-center gap-2">
-                          <div 
-                            className="rounded-full w-3 h-3" 
-                            style={{ backgroundColor: entry.color }} 
-                          />
-                          <span className="text-muted-foreground text-xs">
-                            {entry.value}: {Math.round((data[index].value / total) * 100)}%
-                          </span>
-                        </div>
+            <>
+              <div className="flex flex-col md:flex-1 justify-center w-full h-[250px] md:h-full min-h-0">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={data}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={60}
+                      outerRadius={80}
+                      paddingAngle={5}
+                      dataKey="value"
+                      nameKey="name"
+                      stroke="var(--card)"
+                      strokeWidth={2}
+                    >
+                      {data.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
+                    </Pie>
+                    <Tooltip
+                      formatter={(value: number) => formatCurrency(value)}
+                      contentStyle={{
+                        backgroundColor: "var(--popover)",
+                        borderRadius: "8px",
+                        border: "1px solid var(--border)",
+                        boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
+                        color: "var(--popover-foreground)",
+                      }}
+                      itemStyle={{ color: "var(--popover-foreground)" }}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="mt-4 md:mt-0 pt-4 md:pt-0 pr-1 md:pl-4 border-t md:border-t-0 md:border-l w-full md:w-[220px] lg:w-[260px] max-h-[250px] md:max-h-full overflow-y-auto shrink-0">
+                <div className="flex flex-col gap-y-3 pt-2">
+                  {data.map((entry, index) => (
+                    <div key={`legend-${index}`} className="flex justify-between items-center gap-2 w-full">
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        <div 
+                          className="rounded-full w-2.5 h-2.5 shrink-0" 
+                          style={{ backgroundColor: entry.color }} 
+                        />
+                        <span className="max-w-[120px] text-muted-foreground text-xs truncate" title={entry.name}>
+                          {entry.name}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 pl-2 shrink-0">
+                        <span className="font-medium text-xs">
+                          {formatCurrency(entry.value)}
+                        </span>
+                        <span className="w-8 text-muted-foreground text-xs text-right shrink-0">
+                          {total > 0 ? Math.round((entry.value / total) * 100) : 0}%
+                        </span>
+                      </div>
                     </div>
-                  )}
-                />
-              </PieChart>
-            </ResponsiveContainer>
+                  ))}
+                </div>
+              </div>
+            </>
           ) : (
-            <div className="flex flex-col justify-center items-center h-full text-muted-foreground text-sm italic">
+            <div className="flex flex-col justify-center items-center w-full h-full text-muted-foreground text-sm italic">
               No data for this period
             </div>
           )}
