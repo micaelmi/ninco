@@ -1,0 +1,7 @@
+model UserType {
+  id          String  @id @default(uuid())
+  type        String  @unique // "normal", "premium"
+  description String?
+
+  users User[]
+}

@@ -1,13 +1,17 @@
 model User {
-  id        String   @id // Clerk ID
-  email     String   @unique
-  name      String?
-  imageUrl  String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                    String   @id
+  email                 String   @unique
+  name                  String?
+  imageUrl              String?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  userTypeId            String?
+  preferredCurrencyCode String?  @default("USD")
 
-  accounts     Account[]
-  categories   Category[]
-  tags         Tag[]
-  transactions Transaction[]
+  userType          UserType?     @relation(fields: [userTypeId], references: [id])
+  preferredCurrency Currency?     @relation(fields: [preferredCurrencyCode], references: [code])
+  accounts          Account[]
+  categories        Category[]
+  tags              Tag[]
+  transactions      Transaction[]
 }

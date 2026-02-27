@@ -1,13 +1,12 @@
 model Category {
-  id        String          @id @default(uuid())
-  name      String
-  color     String?
-  icon      String?
-  type      TransactionType @default(EXPENSE)
-  userId    String? // If null, it's a global/system category
-  createdAt DateTime        @default(now())
-
-  user         User?         @relation(fields: [userId], references: [id])
+  id           String          @id @default(uuid())
+  name         String
+  color        String?
+  icon         String?
+  type         TransactionType @default(EXPENSE)
+  userId       String?
+  createdAt    DateTime        @default(now())
+  user         User?           @relation(fields: [userId], references: [id])
   transactions Transaction[]
 }
 

@@ -1,0 +1,9 @@
+model Currency {
+  code          String @id
+  name          String
+  symbol        String
+  decimalPlaces Int    @default(2)
+
+  accounts Account[]
+  users    User[]
+}

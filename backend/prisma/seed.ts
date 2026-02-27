@@ -3,6 +3,7 @@ import { PrismaClient, TransactionType } from '@prisma/client';
 import { subDays, startOfMonth, endOfMonth, eachDayOfInterval, format } from 'date-fns';
 import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
+import { currencies } from './currencies';
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const adapter = new PrismaPg(pool);
@@ -14,14 +15,45 @@ async function main() {
   try {
     console.log('--- Seeding Started ---');
 
+    // 0. Create Currencies
+    console.log('Seeding currencies...');
+    for (const currency of currencies) {
+      await prisma.currency.upsert({
+        where: { code: currency.code },
+        update: {},
+        create: currency,
+      });
+    }
+
+    console.log('Seeding user types...');
+    const userTypes = ['normal', 'premium'];
+    for (const type of userTypes) {
+      await prisma.userType.upsert({
+        where: { type },
+        update: {},
+        create: {
+          type,
+          description: type === 'normal' ? 'Standard user account' : 'Premium user account with advanced features',
+        },
+      });
+    }
+
+    // Get normal user type for the default user
+    const normalUserType = await prisma.userType.findUnique({ where: { type: 'normal' } });
+
     // 1. Create User (if not exists)
     const user = await prisma.user.upsert({
       where: { id: userId },
-      update: {},
+      update: {
+        userTypeId: normalUserType?.id,
+        preferredCurrencyCode: 'USD',
+      },
       create: {
         id: userId,
         email: 'micael@ninco.app',
         name: 'Micael',
+        userTypeId: normalUserType?.id,
+        preferredCurrencyCode: 'USD',
       },
     });
 
@@ -43,6 +75,7 @@ async function main() {
         balance: 2450.75,
         color: '#3b82f6',
         icon: 'Bank',
+        currencyCode: 'USD',
         userId,
       },
     });
@@ -53,6 +86,7 @@ async function main() {
         balance: 12500.00,
         color: '#10b981',
         icon: 'PiggyBank',
+        currencyCode: 'USD',
         userId,
       },
     });

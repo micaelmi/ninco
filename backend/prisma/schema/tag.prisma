@@ -1,9 +1,8 @@
 model Tag {
-  id        String   @id @default(uuid())
-  name      String
-  userId    String
-  createdAt DateTime @default(now())
-
+  id           String        @id @default(uuid())
+  name         String
+  userId       String
+  createdAt    DateTime      @default(now())
   user         User          @relation(fields: [userId], references: [id])
-  transactions Transaction[]
+  transactions Transaction[] @relation("TagToTransaction")
 }

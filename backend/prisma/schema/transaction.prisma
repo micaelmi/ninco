@@ -10,9 +10,8 @@ model Transaction {
   categoryId  String?
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
-
-  user     User      @relation(fields: [userId], references: [id])
-  account  Account   @relation(fields: [accountId], references: [id], onDelete: Cascade)
-  category Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
-  tags     Tag[]
+  account     Account         @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  category    Category?       @relation(fields: [categoryId], references: [id])
+  user        User            @relation(fields: [userId], references: [id])
+  tags        Tag[]           @relation("TagToTransaction")
 }
