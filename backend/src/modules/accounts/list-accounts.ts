@@ -16,6 +16,11 @@ export async function listAccounts(app: FastifyInstance) {
           color: z.string(),
           icon: z.string(),
           userId: z.string(),
+          currencyCode: z.string().nullable(),
+          currency: z.object({
+            symbol: z.string(),
+            decimalPlaces: z.number(),
+          }).nullable(),
           createdAt: z.coerce.date(),
           updatedAt: z.coerce.date(),
         })),
@@ -26,11 +31,16 @@ export async function listAccounts(app: FastifyInstance) {
 
     const accounts = await prisma.account.findMany({
       where: { userId },
+      include: { currency: true },
     });
 
     return accounts.map(account => ({
       ...account,
       balance: account.balance.toString(),
+      currency: account.currency ? {
+        symbol: account.currency.symbol,
+        decimalPlaces: account.currency.decimalPlaces,
+      } : null,
     }));
   });
 }

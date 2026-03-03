@@ -59,6 +59,7 @@ export interface Account {
   userId: string;
   createdAt: Date;
   updatedAt: Date;
+  currencyCode?: string | null;
 }
 
 export interface CreateAccountInput {
@@ -66,6 +67,7 @@ export interface CreateAccountInput {
   balance?: number;
   color: string;
   icon: string;
+  currencyCode?: string;
 }
 
 export interface UpdateAccountInput {
@@ -73,6 +75,7 @@ export interface UpdateAccountInput {
   balance?: number;
   color?: string;
   icon?: string;
+  currencyCode?: string;
 }
 
 // Category Types
@@ -152,6 +155,7 @@ export interface DashboardSummary {
     balance: number;
     color: string;
     icon: string;
+    currencyCode?: string | null;
   }[];
   categoryIncome: {
     id: string;

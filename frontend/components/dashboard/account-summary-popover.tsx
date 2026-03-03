@@ -9,7 +9,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Wallet, Info, Pencil } from 'lucide-react';
+import { Wallet, Info, Pencil, PlusCircle } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 import { IconRenderer } from '@/components/ui/icon-renderer';
 import { AccountForm } from '@/components/forms/account-form';
@@ -21,6 +21,7 @@ interface AccountSummary {
   balance: number;
   color: string;
   icon?: string;
+  currencyCode?: string | null;
 }
 
 interface AccountSummaryPopoverProps {
@@ -56,7 +57,7 @@ export function AccountSummaryPopover({ accounts, trigger }: AccountSummaryPopov
       <DialogTrigger asChild>
         {trigger || (
           <Button variant="ghost" size="icon" className="rounded-full w-5 h-5 cursor-pointer">
-            <Info className="w-4 h-4 text-muted-foreground" />
+            <PlusCircle className="w-4 h-4 text-muted-foreground" />
           </Button>
         )}
       </DialogTrigger>
@@ -79,6 +80,7 @@ export function AccountSummaryPopover({ accounts, trigger }: AccountSummaryPopov
                 balance: editingAccount.balance,
                 color: editingAccount.color,
                 icon: editingAccount.icon || 'Wallet',
+                currencyCode: editingAccount.currencyCode || undefined,
               }}
               onSuccess={resetView}
               onCancel={resetView}
@@ -129,7 +131,7 @@ export function AccountSummaryPopover({ accounts, trigger }: AccountSummaryPopov
                       "font-mono font-bold text-sm",
                       account.balance >= 0 ? "text-emerald-600" : "text-red-500"
                     )}>
-                      {formatCurrency(account.balance)}
+                      {formatCurrency(account.balance, account.currencyCode)}
                     </span>
                     <Button
                       variant="ghost"

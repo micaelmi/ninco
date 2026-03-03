@@ -13,19 +13,21 @@ export async function createAccount(app: FastifyInstance) {
         balance: z.number().default(0),
         color: z.string(),
         icon: z.string(),
+        currencyCode: z.string().optional(),
       }),
       response: {
         201: z.object({
           id: z.uuid(),
           name: z.string(),
           balance: z.string(),
+          currencyCode: z.string().nullable(),
         }),
         400: z.object({ message: z.string() }),
       },
     },
   }, async (request, reply) => {
     const userId = request.userId;
-    const { name, balance, color, icon } = request.body;
+    const { name, balance, color, icon, currencyCode } = request.body;
     
     // Ensure user exists locally
     const userExists = await prisma.user.findUnique({
@@ -46,6 +48,7 @@ export async function createAccount(app: FastifyInstance) {
           balance,
           color,
           icon,
+          currencyCode: currencyCode || 'USD',
         },
       });
 
@@ -53,6 +56,7 @@ export async function createAccount(app: FastifyInstance) {
         id: account.id,
         name: account.name,
         balance: account.balance.toString(),
+        currencyCode: account.currencyCode,
       });
     } catch (error: any) {
       if (error.code === 'P2003') {

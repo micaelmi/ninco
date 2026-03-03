@@ -5,6 +5,8 @@ import { tagRoutes } from './tags';
 import { transactionRoutes } from './transactions';
 import { webhookRoutes } from './webhooks';
 import { accountRoutes } from './accounts';
+import { currencyRoutes } from './currencies';
+import { userRoutes } from './users';
 
 import { feedbackRoutes } from './feedback/feedback.routes';
 
@@ -24,5 +26,7 @@ export async function appRoutes(app: FastifyInstance) {
     protectedApp.register(tagRoutes);
     protectedApp.register(transactionRoutes);
     protectedApp.register(feedbackRoutes, { prefix: '/feedback' });
+    protectedApp.register(currencyRoutes);
+    protectedApp.register(userRoutes, { prefix: '/users' });
   });
 }

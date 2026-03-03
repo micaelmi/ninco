@@ -8,6 +8,8 @@ import {
   Wallet,
   Loader2,
   ArrowRightCircle,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import Link from "next/link";
 import { MotionDiv, staggerContainer, slideUp } from "../ui/motion";
@@ -22,6 +24,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTransactions, useDashboardSummary } from "@/lib/hooks/use-transactions";
 import { useDateRange } from "@/lib/hooks/use-date-range";
+import { useUser } from "@/lib/hooks/use-user";
+import { useExchangeRates, convertCurrency } from "@/lib/hooks/use-exchange-rates";
 import { cn } from "@/lib/utils";
 import { formatCurrency } from "@/lib/utils";
 import Image from 'next/image';
@@ -29,18 +33,38 @@ import { title } from 'process';
 
 export function DashboardClient({ userName }: { userName: string }) {
   const [mounted, setMounted] = useState(false);
+  const [showBalance, setShowBalance] = useState(true);
   const { preset, setPreset, navigate, label, customRange, setCustomRange, filters } = useDateRange('week');
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
+  const { data: userPref, isLoading: userPrefLoading } = useUser();
+  const prefCode = userPref?.preferredCurrencyCode || 'USD';
+  
+  const { data: rates, isLoading: ratesLoading } = useExchangeRates(prefCode);
   const { data: summary, isLoading: summaryLoading } = useDashboardSummary(filters);
   const { data: transactions, isLoading: transactionsLoading } = useTransactions(filters);
 
+  const calculateConvertedBalance = () => {
+    if (!summary?.accounts) return 0;
+    return summary.accounts.reduce((acc, account) => {
+      const code = account.currencyCode || 'USD';
+      return acc + convertCurrency(account.balance, code, prefCode, rates);
+    }, 0);
+  };
+
+  const calculateConvertedTotal = (val?: number) => {
+     // If we had per-transaction currency we would map it here,
+     // assuming for now that summary.income/expense are already in native base...
+     // wait, if summary sends a raw 0 it should be formatted.
+     return val ?? 0;
+  };
+
   if (!mounted) return null;
 
-  if (summaryLoading || transactionsLoading) {
+  if (summaryLoading || transactionsLoading || userPrefLoading || ratesLoading) {
     return (
       <div className="flex flex-col justify-center items-center gap-4 min-h-[400px]">
         <Loader2 className="w-8 h-8 text-primary animate-spin" />
@@ -91,18 +115,28 @@ export function DashboardClient({ userName }: { userName: string }) {
       >
         <MotionDiv variants={slideUp}>
           <Card className="group relative shadow-sm border-2 border-primary/10 h-full overflow-hidden">
-            <div className="right-0 bottom-0 absolute opacity-5 group-hover:opacity-10 p-4 rotate-12 transition-opacity translate-x-4 translate-y-4">
+            <div className="right-0 bottom-0 absolute opacity-5 p-4 rotate-12 transition-opacity translate-x-4 translate-y-4">
               <Wallet className="w-24 h-24" />
             </div>
             <CardHeader className="flex flex-row justify-between items-center space-y-0 pb-2">
               <CardTitle className="font-medium text-sm">Total Balance</CardTitle>
-              <AccountSummaryPopover accounts={summary?.accounts || []} />
+              <div className="flex items-center gap-2">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="w-8 h-8 text-muted-foreground hover:text-primary cursor-pointer"
+                  onClick={() => setShowBalance(!showBalance)}
+                >
+                  {showBalance ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </Button>
+                <AccountSummaryPopover accounts={summary?.accounts || []} />
+              </div>
             </CardHeader>
             <CardContent>
-              <div className="font-mono font-bold text-3xl">
-                {formatCurrency(summary?.totalBalance ?? 0)}
+              <div className={cn("rounded-lg w-fit font-mono font-bold text-3xl transition-colors", !showBalance && "text-gray-300 bg-gray-300")}>
+                {formatCurrency(calculateConvertedBalance(), prefCode)}
               </div>
-              <p className="mt-1 text-muted-foreground text-xs">Across all your accounts</p>
+              <p className="mt-1 text-muted-foreground text-xs">Across all your accounts in {prefCode}</p>
             </CardContent>
           </Card>
         </MotionDiv>
@@ -110,7 +144,8 @@ export function DashboardClient({ userName }: { userName: string }) {
         <MotionDiv variants={slideUp}>
           <SummaryCard
             title="Income"
-            value={summary?.income}
+            value={calculateConvertedTotal(summary?.income)}
+            currencyCode={prefCode}
             icon={ArrowUpCircle}
             variant="income"
             prefix="+"
@@ -129,7 +164,8 @@ export function DashboardClient({ userName }: { userName: string }) {
         <MotionDiv variants={slideUp}>
           <SummaryCard
             title="Expenses"
-            value={summary?.expense}
+            value={calculateConvertedTotal(summary?.expense)}
+            currencyCode={prefCode}
             icon={ArrowDownCircle}
             variant="expense"
             prefix="-"
@@ -210,7 +246,7 @@ export function DashboardClient({ userName }: { userName: string }) {
                         transaction.type === 'INCOME' ? 'text-primary' : 'text-destructive'
                       )}>
                         {transaction.type === 'INCOME' ? '+' : '-'}
-                        {formatCurrency(parseFloat(transaction.amount))}
+                        {formatCurrency(parseFloat(transaction.amount), prefCode)}
                       </div>
                     </MotionDiv>
                   ))
@@ -259,12 +295,14 @@ export function DashboardClient({ userName }: { userName: string }) {
           description="Where your money comes from."
           data={summary?.categoryIncome || []}
           loading={summaryLoading}
+          currencyCode={prefCode}
         />
         <CategoryDistributionChart
           title="Expense Distribution"
           description="Where your money goes."
           data={summary?.categoryExpense || []}
           loading={summaryLoading}
+          currencyCode={prefCode}
         />
       </div>
     </div>

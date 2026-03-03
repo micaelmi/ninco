@@ -29,6 +29,7 @@ export async function getDashboardSummary(app: FastifyInstance) {
             balance: z.number(),
             color: z.string(),
             icon: z.string(),
+            currencyCode: z.string().nullable().optional(),
           })),
           categoryIncome: z.array(z.object({
             id: z.string(),
@@ -58,6 +59,7 @@ export async function getDashboardSummary(app: FastifyInstance) {
         balance: true,
         color: true,
         icon: true,
+        currencyCode: true,
       },
     });
 

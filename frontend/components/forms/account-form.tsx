@@ -15,9 +15,12 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { CustomFormInput } from '@/components/ui/custom-form-input';
 import { useUpdateAccount, useCreateAccount } from '@/lib/hooks/use-accounts';
+import { useCurrencies } from '@/lib/hooks/use-currencies';
+import { useUser } from '@/lib/hooks/use-user';
 import { IconRenderer, CATEGORY_ICONS, CATEGORY_COLORS } from '@/components/ui/icon-renderer';
+import { CustomFormSelect } from '@/components/ui/custom-form-select';
+import { CustomFormInput } from '@/components/ui/custom-form-input';
 import { cn } from '@/lib/utils';
 
 const accountFormSchema = z.object({
@@ -25,6 +28,7 @@ const accountFormSchema = z.object({
   balance: z.number(),
   color: z.string().min(1),
   icon: z.string().min(1),
+  currencyCode: z.string().optional(),
 });
 
 type AccountFormValues = z.infer<typeof accountFormSchema>;
@@ -36,6 +40,7 @@ interface AccountFormProps {
     balance: number;
     color: string;
     icon: string;
+    currencyCode?: string | null;
   };
   onSuccess?: () => void;
   onCancel: () => void;
@@ -45,6 +50,9 @@ export function AccountForm({ accountId, initialData, onSuccess, onCancel }: Acc
   const [iconSearch, setIconSearch] = useState('');
   const updateAccount = useUpdateAccount();
   const createAccount = useCreateAccount();
+
+  const { data: currencies, isLoading: currenciesLoading } = useCurrencies();
+  const { data: userPref } = useUser();
 
   const isEditing = !!accountId;
   const isLoading = updateAccount.isPending || createAccount.isPending;
@@ -56,8 +64,14 @@ export function AccountForm({ accountId, initialData, onSuccess, onCancel }: Acc
       balance: initialData?.balance || 0,
       color: initialData?.color || CATEGORY_COLORS[0].value,
       icon: initialData?.icon || 'Wallet',
+      currencyCode: initialData?.currencyCode || userPref?.preferredCurrencyCode || 'USD',
     },
   });
+
+  const currencyOptions = currencies?.map(c => ({
+    label: `${c.code} - ${c.name} (${c.symbol})`,
+    value: c.code,
+  })) || [];
 
   const filteredIcons = CATEGORY_ICONS.filter((icon) =>
     icon.toLowerCase().includes(iconSearch.toLowerCase())
@@ -115,6 +129,15 @@ export function AccountForm({ accountId, initialData, onSuccess, onCancel }: Acc
               <FormMessage />
             </FormItem>
           )}
+        />
+
+        <CustomFormSelect
+          control={form.control}
+          name="currencyCode"
+          label="Currency"
+          placeholder="Select a currency"
+          options={currencyOptions}
+          isLoading={currenciesLoading}
         />
 
         {/* Color Picker — reused from category form */}

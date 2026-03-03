@@ -80,6 +80,10 @@ export async function clerkSync(app: FastifyInstance) {
 
       const fullName = first_name && last_name ? `${first_name} ${last_name}` : (first_name || last_name || null);
 
+      const normalType = await prisma.userType.findUnique({
+        where: { type: 'normal' },
+      });
+
       await prisma.user.upsert({
         where: { id },
         update: { 
@@ -92,12 +96,15 @@ export async function clerkSync(app: FastifyInstance) {
           email: primaryEmail,
           name: fullName,
           imageUrl: image_url,
+          userTypeId: normalType?.id,
+          preferredCurrencyCode: 'USD',
           accounts: {
             create: {
               name: 'Main Account',
               balance: 0,
               color: '#3b82f6',
-              icon: 'Bank'
+              icon: 'Bank',
+              currencyCode: 'USD'
             }
           }
         },

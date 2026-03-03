@@ -30,6 +30,7 @@ import { cn } from '@/lib/utils';
 import { formatCurrency } from '@/lib/utils';
 import { IconRenderer } from '@/components/ui/icon-renderer';
 import { Transaction } from '@/lib/api/types';
+import { useUser } from '@/lib/hooks/use-user';
 
 interface UseTransactionColumnsOptions {
   onEdit: (transaction: Transaction) => void;
@@ -37,6 +38,9 @@ interface UseTransactionColumnsOptions {
 }
 
 export function useTransactionColumns({ onEdit, onDelete }: UseTransactionColumnsOptions) {
+  const { data: userPref } = useUser();
+  const prefCode = userPref?.preferredCurrencyCode || 'USD';
+
   return useMemo<TableColumnDef<Transaction>[]>(() => [
     {
       accessorKey: "amount",
@@ -49,7 +53,7 @@ export function useTransactionColumns({ onEdit, onDelete }: UseTransactionColumn
             "pl-4 font-mono font-bold text-base whitespace-nowrap",
             type === 'INCOME' ? "text-emerald-600" : "text-red-600"
           )}>
-            {type === 'INCOME' ? '+' : '-'}{formatCurrency(amount)}
+            {type === 'INCOME' ? '+' : '-'}{formatCurrency(amount, prefCode)}
           </div>
         );
       },
@@ -164,5 +168,5 @@ export function useTransactionColumns({ onEdit, onDelete }: UseTransactionColumn
         );
       },
     },
-  ], [onEdit, onDelete]);
+  ], [onEdit, onDelete, prefCode]);
 }

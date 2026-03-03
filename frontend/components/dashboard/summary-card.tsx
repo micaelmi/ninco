@@ -10,6 +10,8 @@ interface SummaryCardProps {
   value: number | undefined;
   icon: LucideIcon;
   isLoading?: boolean;
+  /** Currency code to target */
+  currencyCode?: string;
   /** Visual variant */
   variant?: 'default' | 'income' | 'expense' | 'balance';
   /** Optional prefix like '+' or '-' */
@@ -55,13 +57,14 @@ export function SummaryCard({
   icon: Icon,
   isLoading = false,
   variant = 'default',
+  currencyCode,
   prefix = '',
   subtitle,
   className,
   action,
 }: SummaryCardProps) {
   const styles = variantStyles[variant];
-  const displayValue = value !== undefined ? `${prefix}${formatCurrency(value)}` : '$0.00';
+  const displayValue = value !== undefined ? `${prefix}${formatCurrency(value, currencyCode)}` : '$0.00';
 
   // Dynamic text color for balance variant
   const valueColor = variant === 'balance' && value !== undefined

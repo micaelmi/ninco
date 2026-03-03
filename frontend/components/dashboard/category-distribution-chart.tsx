@@ -14,13 +14,15 @@ interface CategoryDistributionChartProps {
     color: string;
   }[];
   loading?: boolean;
+  currencyCode?: string;
 }
 
 export function CategoryDistributionChart({ 
   title, 
   description, 
   data, 
-  loading 
+  loading,
+  currencyCode
 }: CategoryDistributionChartProps) {
   const total = data.reduce((sum, item) => sum + item.value, 0);
 
@@ -68,7 +70,7 @@ export function CategoryDistributionChart({
                       ))}
                     </Pie>
                     <Tooltip
-                      formatter={(value: number) => formatCurrency(value)}
+                      formatter={(value: number) => formatCurrency(value, currencyCode)}
                       contentStyle={{
                         backgroundColor: "var(--popover)",
                         borderRadius: "8px",
@@ -96,7 +98,7 @@ export function CategoryDistributionChart({
                       </div>
                       <div className="flex items-center gap-2 pl-2 shrink-0">
                         <span className="font-medium text-xs">
-                          {formatCurrency(entry.value)}
+                          {formatCurrency(entry.value, currencyCode)}
                         </span>
                         <span className="w-8 text-muted-foreground text-xs text-right shrink-0">
                           {total > 0 ? Math.round((entry.value / total) * 100) : 0}%

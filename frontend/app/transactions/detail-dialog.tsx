@@ -11,9 +11,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { cn } from '@/lib/utils';
-import { formatCurrency } from '@/lib/utils';
+import { formatCurrency, cn } from '@/lib/utils';
 import { Transaction } from '@/lib/api/types';
+import { useUser } from '@/lib/hooks/use-user';
 
 interface TransactionDetailDialogProps {
   transaction: Transaction | null;
@@ -30,6 +30,9 @@ export function TransactionDetailDialog({
   onEdit,
   onDelete,
 }: TransactionDetailDialogProps) {
+  const { data: userPref } = useUser();
+  const prefCode = userPref?.preferredCurrencyCode || 'USD';
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
@@ -50,7 +53,7 @@ export function TransactionDetailDialog({
                 transaction.type === 'INCOME' ? "text-emerald-600" : "text-red-600"
               )}>
                 {transaction.type === 'INCOME' ? '+' : '-'}
-                {formatCurrency(parseFloat(transaction.amount))}
+                {formatCurrency(parseFloat(transaction.amount), prefCode)}
               </div>
             </div>
 
