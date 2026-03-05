@@ -61,7 +61,7 @@ export function AccountForm({ accountId, initialData, onSuccess, onCancel }: Acc
     resolver: zodResolver(accountFormSchema),
     defaultValues: {
       name: initialData?.name || '',
-      balance: initialData?.balance || 0,
+      balance: initialData?.balance ?? ('' as any),
       color: initialData?.color || CATEGORY_COLORS[0].value,
       icon: initialData?.icon || 'Wallet',
       currencyCode: initialData?.currencyCode || userPref?.preferredCurrencyCode || 'USD',
@@ -108,27 +108,14 @@ export function AccountForm({ accountId, initialData, onSuccess, onCancel }: Acc
           placeholder="e.g. Main Account, Savings..."
         />
 
-        <FormField
+        <CustomFormInput
           control={form.control}
           name="balance"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Balance</FormLabel>
-              <FormControl>
-                <div className="relative">
-                  <span className="top-1/2 left-3 absolute font-mono text-muted-foreground text-sm -translate-y-1/2">$</span>
-                  <input
-                    type="number"
-                    step="0.01"
-                    className="bg-background px-3 py-2 pl-7 border border-input rounded-md outline-none focus:ring-1 focus:ring-ring w-full font-mono text-sm"
-                    value={field.value}
-                    onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
-                  />
-                </div>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Balance"
+          type="number"
+          step="0.01"
+          placeholder="0.00"
+          startIcon={<span className="font-mono text-sm">$</span>}
         />
 
         <CustomFormSelect

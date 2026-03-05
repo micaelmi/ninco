@@ -64,7 +64,7 @@ export function SummaryCard({
   action,
 }: SummaryCardProps) {
   const styles = variantStyles[variant];
-  const displayValue = value !== undefined ? `${prefix}${formatCurrency(value, currencyCode)}` : '$0.00';
+  const displayValue = value !== undefined ? `${prefix}${formatCurrency(value, currencyCode)}` : `${prefix}${formatCurrency(0, currencyCode)}`;
 
   // Dynamic text color for balance variant
   const valueColor = variant === 'balance' && value !== undefined

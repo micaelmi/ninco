@@ -6,7 +6,7 @@ export interface Transaction {
   amount: string;
   type: 'INCOME' | 'EXPENSE';
   date: Date;
-  description: string;
+  description: string | null;
   comments: string | null;
   categoryId: string | null;
   createdAt: Date;
@@ -31,7 +31,7 @@ export interface CreateTransactionInput {
   amount: number;
   type: 'INCOME' | 'EXPENSE';
   date: string; // ISO datetime string
-  description: string;
+  description?: string;
   accountId: string;
   comments?: string;
   categoryId?: string;
@@ -85,7 +85,7 @@ export interface Category {
   type: 'INCOME' | 'EXPENSE';
   color: string;
   icon: string;
-  userId: string;
+  userId: string | null;
   createdAt: Date;
   updatedAt: Date;
 }

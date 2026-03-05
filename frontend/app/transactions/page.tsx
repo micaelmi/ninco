@@ -3,7 +3,7 @@
 import { useState, useMemo, useCallback } from 'react';
 import { useUser } from '@clerk/nextjs';
 import Link from 'next/link';
-import { format } from 'date-fns';
+import { format, subMonths, startOfMonth, endOfMonth } from 'date-fns';
 import {
   Calendar as CalendarIcon,
   PlusCircle,
@@ -36,10 +36,12 @@ import { useTransactions, useDeleteTransaction, useDashboardSummary } from '@/li
 import { useDateRange, type DateRangePreset } from '@/lib/hooks/use-date-range';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
+import { useUser as useAppUser } from '@/lib/hooks/use-user';
 import { Transaction } from '@/lib/api/types';
 
 export default function TransactionsPage() {
   const { user } = useUser();
+  const { data: userPref } = useAppUser();
 
   // Date range (shared hook)
   const { preset, setPreset, dateRange, setCustomRange, filters: dateFilters } = useDateRange('month');
@@ -126,6 +128,7 @@ export default function TransactionsPage() {
               icon={ArrowUpCircle}
               variant="income"
               isLoading={isSummaryLoading}
+              currencyCode={userPref?.preferredCurrencyCode || undefined}
             />
             <SummaryCard
               title="Total Expenses"
@@ -133,6 +136,7 @@ export default function TransactionsPage() {
               icon={ArrowDownCircle}
               variant="expense"
               isLoading={isSummaryLoading}
+              currencyCode={userPref?.preferredCurrencyCode || undefined}
             />
             <SummaryCard
               title="Net Balance"
@@ -140,6 +144,7 @@ export default function TransactionsPage() {
               icon={Wallet}
               variant="balance"
               isLoading={isSummaryLoading}
+              currencyCode={userPref?.preferredCurrencyCode || undefined}
             />
           </div>
 
@@ -160,6 +165,34 @@ export default function TransactionsPage() {
                       <SelectItem value="custom">Custom</SelectItem>
                     </SelectContent>
                   </Select>
+
+                  <Button 
+                    variant="outline"
+                    className="h-9"
+                    onClick={() => {
+                      const now = new Date();
+                      setCustomRange({
+                        from: startOfMonth(subMonths(now, 1)),
+                        to: endOfMonth(subMonths(now, 1)),
+                      });
+                    }}
+                  >
+                    Previous Month
+                  </Button>
+
+                  <Button 
+                    variant="outline"
+                    className="h-9"
+                    onClick={() => {
+                      const now = new Date();
+                      setCustomRange({
+                        from: startOfMonth(subMonths(now, 2)),
+                        to: endOfMonth(now),
+                      });
+                    }}
+                  >
+                    Last 3 Months
+                  </Button>
 
                   <Popover>
                     <PopoverTrigger asChild>

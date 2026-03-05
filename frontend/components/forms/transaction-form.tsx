@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { format } from 'date-fns';
 import { CalendarIcon, Loader2 } from 'lucide-react';
+import { subDays } from 'date-fns';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
@@ -121,7 +122,7 @@ export function TransactionForm({ type: propsType, initialData, transactionId, o
     if (initialData) {
       form.reset({
         amount: parseFloat(initialData.amount),
-        description: initialData.description,
+        description: initialData.description || '',
         date: new Date(initialData.date),
         accountId: initialData.accountId,
         comments: initialData.comments || '',
@@ -211,36 +212,84 @@ export function TransactionForm({ type: propsType, initialData, transactionId, o
           placeholder="What is this transaction for?"
         />
 
-        <CustomFormDatePicker
-          control={form.control}
-          name="date"
-          label="Date"
-          disabled={(date) =>
-            date > new Date() || date < new Date('1900-01-01')
-          }
-        />
+        <div className="space-y-2">
+          <CustomFormDatePicker
+            control={form.control}
+            name="date"
+            label="Date"
+            disabled={(date) =>
+              date > new Date() || date < new Date('1900-01-01')
+            }
+          />
+          <div className="flex flex-wrap gap-2 text-xs">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="px-2 py-1 h-7 text-xs"
+              onClick={() => form.setValue('date', subDays(new Date(), 1))}
+            >
+              Yesterday
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="px-2 py-1 h-7 text-xs"
+              onClick={() => form.setValue('date', subDays(new Date(), 2))}
+            >
+              2 days ago
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="px-2 py-1 h-7 text-xs"
+              onClick={() => form.setValue('date', subDays(new Date(), 3))}
+            >
+              3 days ago
+            </Button>
+          </div>
+        </div>
 
-        <CustomFormSelect
-          control={form.control}
-          name="accountId"
-          label="Account"
-          placeholder="Select an account"
-          description="Select the account for this transaction"
-          isLoading={accountsLoading}
-          emptyMessage="No accounts found. Please create an account first."
-          options={accounts?.map((account: any) => ({
-            value: account.id,
-            label: (
-              <div className="flex items-center gap-2">
-                <span
-                  className="rounded-full w-3 h-3"
-                  style={{ backgroundColor: account.color }}
-                />
-                {account.name}
-              </div>
-            ),
-          })) || []}
-        />
+        {(() => {
+          const selectedAccountId = form.watch('accountId');
+          const selectedAccount = accounts?.find((a: any) => a.id === selectedAccountId);
+          
+          let descriptionText = "Select the account for this transaction";
+          
+          if (selectedAccount?.currencyCode) {
+            if (type === 'INCOME') {
+              descriptionText = `Amount added in ${selectedAccount.currencyCode}`;
+            } else if (type === 'EXPENSE') {
+              descriptionText = `Amount deducted in ${selectedAccount.currencyCode}`;
+            }
+          }
+
+          return (
+            <CustomFormSelect
+              control={form.control}
+              name="accountId"
+              label="Account"
+              placeholder="Select an account"
+              description={descriptionText}
+              isLoading={accountsLoading}
+              emptyMessage="No accounts found. Please create an account first."
+              options={accounts?.map((account: any) => ({
+                value: account.id,
+                label: (
+                  <div className="flex items-center gap-2">
+                    <span
+                      className="rounded-full w-3 h-3"
+                      style={{ backgroundColor: account.color }}
+                    />
+                    {account.name}
+                  </div>
+                ),
+              })) || []}
+            />
+          );
+        })()}
 
         <div className="space-y-2">
           <CustomFormSelect

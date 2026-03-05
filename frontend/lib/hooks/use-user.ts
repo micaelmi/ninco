@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api/client';
 
 export interface UserPreferences {
@@ -22,5 +22,22 @@ export function useUser() {
     },
     staleTime: 24 * 60 * 60 * 1000, // cache for 24h as per plan
     gcTime: 24 * 60 * 60 * 1000,
+  });
+}
+
+export function useUpdateUser() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: { preferredCurrencyCode?: string }) => {
+      const response = await apiClient.put('/users/me', data);
+      return response.data as UserPreferences;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user', 'preferences'] });
+      // Might want to invalidate dashboard and exchange-rates as well
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] });
+      queryClient.invalidateQueries({ queryKey: ['exchange-rates'] });
+    },
   });
 }

@@ -59,8 +59,13 @@ export function CategoryList() {
     );
   }
 
+  const myCategories = categories?.filter((c) => c.userId !== null) || [];
+  const defaultCategories = categories?.filter((c) => c.userId === null) || [];
+
   return (
-    <div className="space-y-4">
+    <div className="space-y-8">
+      {/* My Categories Section */}
+      <div className="space-y-4">
       <div className="flex justify-between items-center">
         <h2 className="font-semibold text-lg">Categories</h2>
         <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
@@ -94,21 +99,21 @@ export function CategoryList() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {categories?.length === 0 ? (
+            {myCategories.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={4} className="h-24 text-center">
-                  No categories found.
+                  You haven't created any custom categories yet.
                 </TableCell>
               </TableRow>
             ) : (
-              categories?.map((category) => (
+              myCategories.map((category) => (
                 <TableRow key={category.id}>
                   <TableCell>
                     <div 
                       className="flex justify-center items-center rounded-full w-8 h-8 text-white"
-                      style={{ backgroundColor: category.color }}
+                      style={{ backgroundColor: category.color || '#94a3b8' }}
                     >
-                      <IconRenderer name={category.icon} className="w-4 h-4" />
+                      <IconRenderer name={category.icon || 'HelpCircle'} className="w-4 h-4" />
                     </div>
                   </TableCell>
                   <TableCell className="font-medium">{category.name}</TableCell>
@@ -161,6 +166,51 @@ export function CategoryList() {
             )}
           </TableBody>
         </Table>
+      </div>
+      </div>
+
+      {/* Default Categories Section */}
+      <div className="space-y-4">
+        <h2 className="font-semibold text-lg">Default Categories</h2>
+        <div className="border rounded-md">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Icon</TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead>Type</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {defaultCategories.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={3} className="h-24 text-center">
+                    No default categories found.
+                  </TableCell>
+                </TableRow>
+              ) : (
+                defaultCategories.map((category) => (
+                  <TableRow key={category.id}>
+                    <TableCell>
+                      <div 
+                        className="flex justify-center items-center rounded-full w-8 h-8 text-white"
+                        style={{ backgroundColor: category.color || '#94a3b8' }}
+                      >
+                        <IconRenderer name={category.icon || 'HelpCircle'} className="w-4 h-4" />
+                      </div>
+                    </TableCell>
+                    <TableCell className="font-medium">{category.name}</TableCell>
+                    <TableCell>
+                      <Badge variant={category.type === 'INCOME' ? 'default' : 'secondary'}>
+                        {category.type}
+                      </Badge>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </div>
 
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>

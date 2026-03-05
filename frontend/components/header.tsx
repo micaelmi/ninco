@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/mode-toggle";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
-import { Menu } from "lucide-react";
+import { Menu, Settings } from "lucide-react";
 import { FeedbackDialog } from "@/components/feedback-dialog";
 
 export default function Header() {
@@ -27,28 +27,34 @@ export default function Header() {
                 {/* Desktop Navigation */}
                 <nav className="hidden md:flex items-center gap-6">
                     <SignedIn>
-                        <div className="flex items-center gap-4 text-muted-foreground">
-                             <Link href="/home" className="font-medium hover:text-foreground text-sm transition-colors">
-                                Dashboard
-                            </Link>
-                            <Link href="/transactions" className="font-medium hover:text-foreground text-sm transition-colors">
-                                Transactions
-                            </Link>
-                            <FeedbackDialog>
-                                <button type="button" className="font-medium hover:text-foreground text-sm transition-colors cursor-pointer">
-                                    Feedback
-                                </button>
-                            </FeedbackDialog>
-                        </div>
-                        <div className="mx-2 bg-border w-px h-6"></div>
-                        <div className="flex items-center gap-2">
-                             <ModeToggle />
-                            <UserButton afterSignOutUrl="/" appearance={{
-                                elements: {
-                                    avatarBox: "w-8 h-8 focus:ring-2 focus:ring-ring focus:outline-none rounded-full"
-                                }
-                            }} />
-                        </div>
+                        <>
+                            <div className="flex items-center gap-4 text-muted-foreground">
+                                <Link href="/home" className="font-medium hover:text-foreground text-sm transition-colors">
+                                    Dashboard
+                                </Link>
+                                <Link href="/transactions" className="font-medium hover:text-foreground text-sm transition-colors">
+                                    Transactions
+                                </Link>
+                                <FeedbackDialog>
+                                    <button type="button" className="font-medium hover:text-foreground text-sm transition-colors cursor-pointer">
+                                        Feedback
+                                    </button>
+                                </FeedbackDialog>
+                            </div>
+                            <div className="mx-2 bg-border w-px h-6"></div>
+                            <div className="flex items-center gap-2">
+                                <ModeToggle />
+                                <Link href="/manage" className="hover:bg-accent focus:bg-accent p-2 rounded-md outline-none text-muted-foreground transition-colors hover:text-accent-foreground">
+                                    <Settings className="w-5 h-5" />
+                                    <span className="sr-only">Settings</span>
+                                </Link>
+                                <UserButton afterSignOutUrl="/" appearance={{
+                                    elements: {
+                                        avatarBox: "w-8 h-8 focus:ring-2 focus:ring-ring focus:outline-none rounded-full"
+                                    }
+                                }} />
+                            </div>
+                        </>
                     </SignedIn>
                 </nav>
 
@@ -83,6 +89,9 @@ export default function Header() {
                                             Feedback
                                         </button>
                                     </FeedbackDialog>
+                                    <Link href="/manage" className="font-medium hover:text-foreground text-lg">
+                                        Settings
+                                    </Link>
                                     <div className="bg-border w-full h-px"></div>
                                     <div className="flex justify-between items-center gap-4">
                                         <span className="font-medium text-muted-foreground">Theme</span>

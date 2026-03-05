@@ -5,13 +5,13 @@ model Transaction {
   amount      Decimal         @db.Decimal(10, 2)
   type        TransactionType
   date        DateTime
-  description String
+  description String?
   comments    String?
   categoryId  String?
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
   account     Account         @relation(fields: [accountId], references: [id], onDelete: Cascade)
-  category    Category?       @relation(fields: [categoryId], references: [id])
+  category    Category?       @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   user        User            @relation(fields: [userId], references: [id])
   tags        Tag[]           @relation("TagToTransaction")
 }

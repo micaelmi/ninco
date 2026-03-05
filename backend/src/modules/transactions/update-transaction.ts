@@ -27,7 +27,7 @@ export async function updateTransaction(app: FastifyInstance) {
           amount: z.string(),
           type: z.enum(['INCOME', 'EXPENSE']),
           date: z.coerce.date(),
-          description: z.string(),
+          description: z.string().nullable(),
           comments: z.string().nullable(),
           categoryId: z.string().nullable(),
           accountId: z.string(),

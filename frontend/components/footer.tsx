@@ -36,7 +36,7 @@ export default function Footer() {
               Transactions
             </Link>
             <Link href="/manage" className="text-muted-foreground hover:text-primary transition-colors">
-              Categories & Tags
+              Settings
             </Link>
             <FeedbackDialog>
               <button 

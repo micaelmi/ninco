@@ -9,8 +9,8 @@ export const transactionFormSchema = z.object({
     .max(999999999, 'Amount is too large'),
   description: z
     .string()
-    .min(1, 'Description is required')
-    .max(255, 'Description is too long'),
+    .max(255, 'Description is too long')
+    .optional(),
   date: z.date({
     message: 'Date is required',
   }),
