@@ -18,9 +18,35 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Ninco",
-  description: "Personal Finance Management",
+  metadataBase: new URL("https://ninco.app"),
+  title: {
+    default: "Ninco",
+    template: "%s | Ninco",
+  },
+  description: "Master your money with ease. Simple, powerful, and built for you.",
+  keywords: ["Personal Finance", "Money Management", "Expense Tracker", "Budgeting", "Finance App", "Ninco"],
   applicationName: "Ninco",
+  openGraph: {
+    title: "Ninco",
+    description: "Master your money with ease. Simple, powerful, and built for you.",
+    url: "https://ninco.app",
+    siteName: "Ninco",
+    images: [
+      {
+        url: "/icon-512.png",
+        width: 512,
+        height: 512,
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Ninco",
+    description: "Master your money with ease. Simple, powerful, and built for you.",
+    images: ["/icon-512.png"],
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",

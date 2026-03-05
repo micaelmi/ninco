@@ -1,6 +1,12 @@
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Privacy Policy",
+};
+
 export default function PrivacyPage() {
   return (
     <div className="flex flex-col bg-background selection:bg-primary/20 min-h-screen font-mono text-foreground">
