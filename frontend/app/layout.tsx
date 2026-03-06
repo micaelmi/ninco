@@ -4,6 +4,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { QueryProvider } from "@/providers/query-provider";
 import { AuthProvider } from "@/providers/auth-provider";
 import { InstallPWA } from "@/components/install-pwa";
+import { AiChat } from "@/components/ai-chat";
 import { Toaster } from "sonner";
 import "./globals.css";
 
@@ -108,6 +109,7 @@ export default function RootLayout({
             <QueryProvider>
               <AuthProvider>
                 {children}
+                <AiChat />
               </AuthProvider>
             </QueryProvider>
             <InstallPWA />
