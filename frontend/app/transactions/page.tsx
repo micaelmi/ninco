@@ -10,6 +10,11 @@ import {
   ArrowUpCircle,
   ArrowDownCircle,
   Wallet,
+  Download,
+  FileText,
+  FileSpreadsheet,
+  FileJson,
+  Loader2,
 } from 'lucide-react';
 import { PaginationState } from '@tanstack/react-table';
 
@@ -38,6 +43,8 @@ import Header from '@/components/header';
 import Footer from '@/components/footer';
 import { useUser as useAppUser } from '@/lib/hooks/use-user';
 import { Transaction } from '@/lib/api/types';
+import { getTransactions } from '@/lib/api/transactions';
+import { exportToCSV, exportToJSON, exportToPDF, exportToExcel } from '@/lib/utils/export';
 
 export default function TransactionsPage() {
   const { user } = useUser();
@@ -54,6 +61,9 @@ export default function TransactionsPage() {
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   const [deletingTransactionId, setDeletingTransactionId] = useState<string | null>(null);
   const [viewingTransaction, setViewingTransaction] = useState<Transaction | null>(null);
+  
+  // Export state
+  const [isExporting, setIsExporting] = useState(false);
 
   // Queries
   const filters = useMemo(() => ({
@@ -86,6 +96,39 @@ export default function TransactionsPage() {
 
   const handlePresetChange = (newPreset: DateRangePreset) => {
     setPreset(newPreset);
+  };
+
+  const handleExport = async (format: 'csv' | 'json' | 'pdf' | 'excel') => {
+    setIsExporting(true);
+    try {
+      const exportFilters = {
+        ...dateFilters,
+        type: typeFilter === 'ALL' ? undefined : typeFilter,
+        limit: 10000,
+        page: 1,
+      };
+      const response = await getTransactions(exportFilters);
+      const data = response.data;
+      
+      switch (format) {
+        case 'csv':
+          exportToCSV(data);
+          break;
+        case 'json':
+          exportToJSON(data);
+          break;
+        case 'pdf':
+          exportToPDF(data);
+          break;
+        case 'excel':
+          exportToExcel(data);
+          break;
+      }
+    } catch (error) {
+      console.error('Failed to export transactions', error);
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   // Columns (extracted to separate file)
@@ -277,6 +320,32 @@ export default function TransactionsPage() {
               onPaginationChange={setPagination}
               isLoading={isTransactionsLoading}
               onRowClick={setViewingTransaction}
+              renderBottomLeft={
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" size="sm" disabled={isExporting}>
+                      {isExporting ? <Loader2 className="mr-2 w-4 h-4 animate-spin" /> : <Download className="mr-2 w-4 h-4" />}
+                      Export data
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="p-2 w-40" align="start">
+                    <div className="flex flex-col gap-1">
+                      <Button variant="ghost" size="sm" className="justify-start" onClick={() => handleExport('pdf')}>
+                        <FileText className="mr-2 w-4 h-4" /> PDF
+                      </Button>
+                      <Button variant="ghost" size="sm" className="justify-start" onClick={() => handleExport('excel')}>
+                        <FileSpreadsheet className="mr-2 w-4 h-4 text-green-600" /> Excel
+                      </Button>
+                      <Button variant="ghost" size="sm" className="justify-start" onClick={() => handleExport('csv')}>
+                        <FileSpreadsheet className="mr-2 w-4 h-4" /> CSV
+                      </Button>
+                      <Button variant="ghost" size="sm" className="justify-start" onClick={() => handleExport('json')}>
+                        <FileJson className="mr-2 w-4 h-4" /> JSON
+                      </Button>
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              }
             />
           </div>
         </div>

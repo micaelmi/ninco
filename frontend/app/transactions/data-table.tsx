@@ -28,6 +28,7 @@ interface DataTableProps<TData, TValue> {
   onPaginationChange: React.Dispatch<React.SetStateAction<PaginationState>>
   isLoading?: boolean
   onRowClick?: (row: TData) => void
+  renderBottomLeft?: React.ReactNode
 }
 
 export function DataTable<TData, TValue>({
@@ -38,6 +39,7 @@ export function DataTable<TData, TValue>({
   onPaginationChange,
   isLoading,
   onRowClick,
+  renderBottomLeft,
 }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
@@ -111,28 +113,33 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <div className="flex justify-center md:justify-end items-center space-x-2 py-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          <ChevronLeft className="mr-2 w-4 h-4" />
-          Previous
-        </Button>
-         <div className="min-w-[100px] text-muted-foreground text-sm text-center">
-            Page {table.getState().pagination.pageIndex + 1} of {Math.max(1, table.getPageCount())}
+      <div className="flex md:flex-row flex-col-reverse justify-between items-center gap-4 py-4">
+        <div className="flex flex-1 justify-center md:justify-start w-full md:w-auto">
+          {renderBottomLeft}
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          Next
-          <ChevronRight className="ml-2 w-4 h-4" />
-        </Button>
+        <div className="flex justify-center md:justify-end items-center space-x-2 w-full md:w-auto">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            <ChevronLeft className="mr-2 w-4 h-4" />
+            Previous
+          </Button>
+           <div className="min-w-[100px] text-muted-foreground text-sm text-center">
+              Page {table.getState().pagination.pageIndex + 1} of {Math.max(1, table.getPageCount())}
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            Next
+            <ChevronRight className="ml-2 w-4 h-4" />
+          </Button>
+        </div>
       </div>
     </div>
   )
