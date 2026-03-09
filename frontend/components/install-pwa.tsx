@@ -14,6 +14,12 @@ export function InstallPWA() {
   const [showInstallPrompt, setShowInstallPrompt] = useState(false);
 
   useEffect(() => {
+    // Don't show if already dismissed or app is already installed
+    const dismissed = localStorage.getItem("pwa-install-dismissed");
+    if (dismissed || window.matchMedia("(display-mode: standalone)").matches) {
+      return;
+    }
+
     const handler = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
@@ -21,12 +27,6 @@ export function InstallPWA() {
     };
 
     window.addEventListener("beforeinstallprompt", handler);
-
-    // Check if app is already installed
-    if (window.matchMedia("(display-mode: standalone)").matches) {
-      setShowInstallPrompt(false);
-    }
-
     return () => window.removeEventListener("beforeinstallprompt", handler);
   }, []);
 
@@ -44,17 +44,8 @@ export function InstallPWA() {
 
   const handleDismiss = () => {
     setShowInstallPrompt(false);
-    // Save to localStorage that user dismissed the prompt
     localStorage.setItem("pwa-install-dismissed", "true");
   };
-
-  // Don't show if user previously dismissed
-  useEffect(() => {
-    const dismissed = localStorage.getItem("pwa-install-dismissed");
-    if (dismissed) {
-      setShowInstallPrompt(false);
-    }
-  }, []);
 
   if (!showInstallPrompt) return null;
 
