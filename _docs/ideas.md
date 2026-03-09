@@ -1,14 +1,17 @@
 - improve seo - OK
-- message ai to create transaction
+- message ai to create transaction - OK
 - add different currencies - OK
-- generate month report with ai
 - export transactions to csv or pdf - OK
+- add billing
+- currency x transaction sync
+- generate month report with ai
 - add recurring transactions
 - add goals
 - add budget
 - add investment
 - create premium plan for special features
 
+- change AI model to flash lite
 
 NEW FEATURE: message ai to create transaction
  - there will be a floating button that will open a chat with the ai, the ai will be able to create transactions based on the user's messages.
