@@ -1,13 +1,17 @@
+"use client";
+
+import { useState } from "react";
 import { SignedIn, UserButton } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/mode-toggle";
-import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
+import { MobileMenu } from "@/components/mobile-menu";
 import { Menu, Settings } from "lucide-react";
 import { FeedbackDialog } from "@/components/feedback-dialog";
 
 export default function Header() {
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     return (
         <header className="top-0 right-0 left-0 z-50 fixed bg-lime-100/70 supports-backdrop-filter:bg-lime-100/60 dark:bg-stone-900/70 dark:supports-backdrop-filter:bg-stone-900/60 backdrop-blur-xl border-border/50 border-b w-full">
             <div className="flex justify-between items-center mx-auto px-4 max-w-7xl h-16 font-mono text-sm container">
@@ -61,63 +65,58 @@ export default function Header() {
                 {/* Mobile Navigation */}
                 <div className="md:hidden">
                     <SignedIn>
-                        <Sheet>
-                            <SheetTrigger asChild>
-                                <Button variant="ghost" size="icon">
-                                    <Menu className="w-5 h-5" />
-                                    <span className="sr-only">Toggle menu</span>
-                                </Button>
-                            </SheetTrigger>
-                            <SheetContent side="right">
-                                <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
-                                <div className="flex flex-col gap-6 mt-6 p-4">
-                                    <Image
-                                        src={"/mascot.png"}
-                                        alt={"Mascot"}
-                                        width={100}
-                                        height={100}
-                                        className="-scale-x-100 transform"
-                                    />
-                                    <Link href="/home" className="font-medium hover:text-foreground text-lg">
-                                        Dashboard
-                                    </Link>
-                                    <Link href="/transactions" className="font-medium hover:text-foreground text-lg">
-                                        Transactions
-                                    </Link>
-                                    <FeedbackDialog>
-                                        <button type="button" className="font-medium hover:text-foreground text-lg text-left cursor-pointer">
-                                            Feedback
-                                        </button>
-                                    </FeedbackDialog>
-                                    <Link href="/manage" className="font-medium hover:text-foreground text-lg">
-                                        Settings
-                                    </Link>
-                                    <div className="bg-border w-full h-px"></div>
-                                    <div className="flex justify-between items-center gap-4">
-                                        <span className="font-medium text-muted-foreground">Theme</span>
-                                        <ModeToggle />
-                                    </div>
-                                    <div className="flex justify-between items-center gap-4">
-                                        <span className="font-medium text-muted-foreground">Profile</span>
-                                        <UserButton afterSignOutUrl="/" appearance={{
-                                            elements: {
-                                                avatarBox: "w-8 h-8 focus:ring-2 focus:ring-ring focus:outline-none rounded-full"
-                                            }
-                                        }} />
-                                    </div>
-                                    <div className="bg-border w-full h-px"></div>
-                                    <div className="flex gap-4 mt-4">
-                                        <Link href="/privacy" className="text-muted-foreground hover:text-foreground text-sm">
-                                            Privacy
-                                        </Link>
-                                        <span className="text-sm">&</span>
-                                        <Link href="/terms" className="text-muted-foreground hover:text-foreground text-sm">
-                                            Terms
-                                        </Link>
-                                    </div>
+                        <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(true)}>
+                            <Menu className="w-5 h-5" />
+                            <span className="sr-only">Toggle menu</span>
+                        </Button>
+                        <MobileMenu open={mobileMenuOpen} onOpenChange={setMobileMenuOpen} side="right">
+                            <div className="flex flex-col gap-6 mt-6 p-4">
+                                <Image
+                                    src={"/mascot.png"}
+                                    alt={"Mascot"}
+                                    width={100}
+                                    height={100}
+                                    className="-scale-x-100 transform"
+                                />
+                                <Link href="/home" className="font-medium hover:text-foreground text-lg" onClick={() => setMobileMenuOpen(false)}>
+                                    Dashboard
+                                </Link>
+                                <Link href="/transactions" className="font-medium hover:text-foreground text-lg" onClick={() => setMobileMenuOpen(false)}>
+                                    Transactions
+                                </Link>
+                                <FeedbackDialog>
+                                    <button type="button" className="font-medium hover:text-foreground text-lg text-left cursor-pointer">
+                                        Feedback
+                                    </button>
+                                </FeedbackDialog>
+                                <Link href="/manage" className="font-medium hover:text-foreground text-lg" onClick={() => setMobileMenuOpen(false)}>
+                                    Settings
+                                </Link>
+                                <div className="bg-border w-full h-px"></div>
+                                <div className="flex justify-between items-center gap-4">
+                                    <span className="font-medium text-muted-foreground">Theme</span>
+                                    <ModeToggle />
                                 </div>
-                            </SheetContent>
-                        </Sheet>
+                                <div className="flex justify-between items-center gap-4">
+                                    <span className="font-medium text-muted-foreground">Profile</span>
+                                    <UserButton afterSignOutUrl="/" appearance={{
+                                        elements: {
+                                            avatarBox: "w-8 h-8 focus:ring-2 focus:ring-ring focus:outline-none rounded-full"
+                                        }
+                                    }} />
+                                </div>
+                                <div className="bg-border w-full h-px"></div>
+                                <div className="flex gap-4 mt-4">
+                                    <Link href="/privacy" className="text-muted-foreground hover:text-foreground text-sm">
+                                        Privacy
+                                    </Link>
+                                    <span className="text-sm">&</span>
+                                    <Link href="/terms" className="text-muted-foreground hover:text-foreground text-sm">
+                                        Terms
+                                    </Link>
+                                </div>
+                            </div>
+                        </MobileMenu>
                     </SignedIn>
                 </div>
             </div>
