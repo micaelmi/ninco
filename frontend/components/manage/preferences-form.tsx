@@ -14,6 +14,7 @@ import {
 import { useCurrencies } from '@/lib/hooks/use-currencies';
 import { useUser, useUpdateUser } from '@/lib/hooks/use-user';
 import { CustomFormSelect } from '@/components/ui/custom-form-select';
+import { error } from 'console';
 
 const preferencesFormSchema = z.object({
   preferredCurrencyCode: z.string().min(1, 'Please select a currency'),
@@ -28,19 +29,10 @@ export function PreferencesForm() {
 
   const form = useForm<PreferencesFormValues>({
     resolver: zodResolver(preferencesFormSchema),
-    defaultValues: {
-      preferredCurrencyCode: 'USD',
+    values: {
+      preferredCurrencyCode: userPref?.preferredCurrencyCode || 'USD',
     },
   });
-
-  // Reset form when user preferences are loaded
-  useEffect(() => {
-    if (userPref?.preferredCurrencyCode) {
-      form.reset({
-        preferredCurrencyCode: userPref.preferredCurrencyCode,
-      });
-    }
-  }, [userPref, form]);
 
   const currencyOptions = currencies?.map(c => ({
     label: `${c.code} - ${c.name} (${c.symbol})`,
