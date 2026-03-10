@@ -56,8 +56,9 @@ jobs:
             echo '🗄️ Applying database migrations...'
             docker compose --profile prod exec -T ninco-backend npx prisma migrate deploy
             
-            echo '🩺 Running health check...'
-            docker compose --profile prod exec -T ninco-backend curl -f http://localhost:3333/health
+            echo '🩺 Running health check (waiting for services)...'
+            sleep 3
+            for i in 1 2 3 4 5; do curl -fsS https://api.ninco.app/health && break || sleep 5; done
             
             echo '🧹 Cleaning up old Docker resources...'
             docker image prune -f
