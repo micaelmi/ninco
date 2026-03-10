@@ -31,8 +31,8 @@ jobs:
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
-          # Write the private key and fix any Windows line endings
-          echo "${{ secrets.SERVER_SSH_KEY }}" | tr -d '\r' > ~/.ssh/deploy_key
+          # Decode the base64 private key perfectly, regardless of line endings
+          echo "${{ secrets.SERVER_SSH_KEY }}" | base64 --decode > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
           ssh-keyscan -p ${{ secrets.SERVER_PORT }} -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
 
