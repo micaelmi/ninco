@@ -57,7 +57,7 @@ jobs:
             docker compose --profile prod exec -T ninco-backend npx prisma migrate deploy
             
             echo '🩺 Running health check...'
-            curl -f http://localhost:3344/health
+            docker compose --profile prod exec -T ninco-backend curl -f http://localhost:3333/health
             
             echo '🧹 Cleaning up old Docker resources...'
             docker image prune -f
