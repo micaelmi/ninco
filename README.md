@@ -28,18 +28,21 @@ We follow a strict design philosophy to ensure consistency and accessibility:
 ## 🚀 Key Features
 
 - 📊 **Dynamic Dashboard**: Interactive data visualization using [Recharts](https://recharts.org/), providing clear insights into spending habits and financial health.
+- 🤖 **AI Chat Transactions**: Register incomes and expenses through a super fast, simple, and intuitive AI chat interface.
 - 💸 **Transaction Management**: 
     - Full CRUD support for transactions.
     - Advanced filtering (by date, type, account, and category).
     - Custom date range selection.
+    - **Data Exporting**: Export selected transactions to PDF, CSV, or JSON directly from the datatable UI.
 - 🏷️ **Customizable Categories**: Create and personalize categories with unique colors and icons.
 - 🏦 **Multi-Account Support**: Manage multiple accounts and view aggregated summaries.
-- 🔐 **Secure Authentication**: Integrated with [Clerk](https://clerk.dev/) for robust user management and security.
+- 🔐 **Secure Authentication**: Integrated with [Clerk](https://clerk.dev/) for robust user identity and session management.
 - 🎨 **Premium UI/UX**: 
     - Native **Dark Mode** support using `next-themes`.
-    - Responsive mobile-first design with a custom drawer-based header.
+    - Responsive mobile-first design with a custom drawer-based header, mobile-adjusted popups, and pagination.
     - Built with **Shadcn UI** and **Tailwind CSS 4**.
-- 🔄 **Real-time Sync**: Backend webhooks for seamless synchronization of user data.
+- 🔄 **Real-time Sync**: Backend webhooks for seamless data synchronization.
+- 🚀 **Automated CI/CD**: Configured GitHub Actions for automated Docker builds, database migrations, and production deployments.
 
 ## 🛠 Tech Stack
 
@@ -60,6 +63,7 @@ We follow a strict design philosophy to ensure consistency and accessibility:
 - **Monorepo**: [pnpm Workspaces](https://pnpm.io/workspaces)
 - **Containerization**: [Docker](https://www.docker.com/) & Docker Compose
 - **Auth**: [Clerk](https://clerk.com/)
+- **CI/CD**: GitHub Actions for automated deployments
 
 ## 🏗 Project Structure
 
