@@ -1,51 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { X, Download } from "lucide-react";
-
-interface BeforeInstallPromptEvent extends Event {
-  prompt: () => Promise<void>;
-  userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
-}
+import { usePWA } from "@/providers/pwa-provider";
 
 export function InstallPWA() {
-  const [deferredPrompt, setDeferredPrompt] =
-    useState<BeforeInstallPromptEvent | null>(null);
-  const [showInstallPrompt, setShowInstallPrompt] = useState(false);
-
-  useEffect(() => {
-    // Don't show if already dismissed or app is already installed
-    const dismissed = localStorage.getItem("pwa-install-dismissed");
-    if (dismissed || window.matchMedia("(display-mode: standalone)").matches) {
-      return;
-    }
-
-    const handler = (e: Event) => {
-      e.preventDefault();
-      setDeferredPrompt(e as BeforeInstallPromptEvent);
-      setShowInstallPrompt(true);
-    };
-
-    window.addEventListener("beforeinstallprompt", handler);
-    return () => window.removeEventListener("beforeinstallprompt", handler);
-  }, []);
-
-  const handleInstall = async () => {
-    if (!deferredPrompt) return;
-
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-
-    if (outcome === "accepted") {
-      setDeferredPrompt(null);
-      setShowInstallPrompt(false);
-    }
-  };
-
-  const handleDismiss = () => {
-    setShowInstallPrompt(false);
-    localStorage.setItem("pwa-install-dismissed", "true");
-  };
+  const { showInstallPrompt, installApp, dismissPWA } = usePWA();
 
   if (!showInstallPrompt) return null;
 
@@ -67,13 +26,13 @@ export function InstallPWA() {
 
           <div className="flex gap-2">
             <button
-              onClick={handleInstall}
+              onClick={installApp}
               className="flex-1 bg-emerald-500 hover:bg-emerald-600 px-3 py-1.5 rounded-md font-medium text-white text-xs transition-colors"
             >
               Install
             </button>
             <button
-              onClick={handleDismiss}
+              onClick={dismissPWA}
               className="bg-muted hover:bg-muted/80 px-3 py-1.5 rounded-md font-medium text-muted-foreground text-xs transition-colors"
             >
               Not Now
@@ -82,7 +41,7 @@ export function InstallPWA() {
         </div>
 
         <button
-          onClick={handleDismiss}
+          onClick={dismissPWA}
           className="text-muted-foreground hover:text-foreground transition-colors shrink-0"
           aria-label="Close"
         >

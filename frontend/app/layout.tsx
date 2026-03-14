@@ -3,7 +3,9 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { QueryProvider } from "@/providers/query-provider";
 import { AuthProvider } from "@/providers/auth-provider";
+import { PWAProvider } from "@/providers/pwa-provider";
 import { InstallPWA } from "@/components/install-pwa";
+import { ServiceWorkerRegister } from "@/components/service-worker-register";
 import { AiChat } from "@/components/ai-chat";
 import { Toaster } from "sonner";
 import "./globals.css";
@@ -56,7 +58,6 @@ export const metadata: Metadata = {
   formatDetection: {
     telephone: false,
   },
-  manifest: "/manifest.json",
 
   icons: {
     icon: [
@@ -83,23 +84,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider
-      signInForceRedirectUrl="/home"
-      signUpForceRedirectUrl="/home"
-      appearance={{
-        layout: {
-          socialButtonsVariant: "iconButton",
-          logoImageUrl: "/favicon.ico",
-        },
-        variables: {
-          colorPrimary: "#10b981",
-        },
-      }}
-    >
-      <html lang="en" suppressHydrationWarning>
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        >
+    <html lang="en" suppressHydrationWarning>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      ><ClerkProvider
+          signInForceRedirectUrl="/home"
+          signUpForceRedirectUrl="/home"
+          appearance={{
+            options: {
+              socialButtonsVariant: "iconButton",
+              logoImageUrl: "/favicon.ico",
+            },
+            variables: {
+              colorPrimary: "#10b981",
+            },
+          }}>
           <ThemeProvider
             attribute="class"
             defaultTheme="light"
@@ -108,15 +107,17 @@ export default function RootLayout({
           >
             <QueryProvider>
               <AuthProvider>
-                {children}
-                <AiChat />
+                <PWAProvider>
+                  {children}
+                  <AiChat />
+                  <InstallPWA />
+                  <ServiceWorkerRegister />
+                  <Toaster richColors position="bottom-right" />
+                </PWAProvider>
               </AuthProvider>
             </QueryProvider>
-            <InstallPWA />
-            <Toaster richColors position="bottom-right" />
           </ThemeProvider>
-        </body>
-      </html>
-    </ClerkProvider>
+        </ClerkProvider></body>
+    </html>
   );
 }
