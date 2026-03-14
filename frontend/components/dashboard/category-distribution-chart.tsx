@@ -70,7 +70,7 @@ export function CategoryDistributionChart({
                       ))}
                     </Pie>
                     <Tooltip
-                      formatter={(value: number) => formatCurrency(value, currencyCode)}
+                      formatter={(value: any) => formatCurrency(value as number, currencyCode)}
                       contentStyle={{
                         backgroundColor: "var(--popover)",
                         borderRadius: "8px",
