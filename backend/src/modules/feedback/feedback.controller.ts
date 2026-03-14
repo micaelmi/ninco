@@ -1,8 +1,10 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { clerkClient } from '@clerk/clerk-sdk-node';
+import { createClerkClient } from '@clerk/backend';
 import { env } from '../../lib/env';
 import { sendEmail } from '../../lib/mailer';
 import { FeedbackInput } from './feedback.schema';
+
+const clerkClient = createClerkClient({ secretKey: env.CLERK_SECRET_KEY });
 
 export async function sendFeedbackHandler(
   request: FastifyRequest<{ Body: FeedbackInput }>,
