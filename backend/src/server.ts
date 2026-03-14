@@ -23,7 +23,7 @@ app.register(swagger, {
     info: {
       title: 'Ninco API',
       description: 'API for Ninco application',
-      version: '1.0.0',
+      version: '1.1.0',
     },
   },
   transform: jsonSchemaTransform,

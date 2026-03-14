@@ -1,17 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import { SignedIn, UserButton } from "@clerk/nextjs";
+import { Show, UserButton } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/mode-toggle";
 import { MobileMenu } from "@/components/mobile-menu";
-import { Menu, Settings } from "lucide-react";
+import { Menu, Settings, Download } from "lucide-react";
 import { FeedbackDialog } from "@/components/feedback-dialog";
+import { usePWA } from "@/providers/pwa-provider";
 
 export default function Header() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const { isInstallable, installApp } = usePWA();
     return (
         <header className="top-0 right-0 left-0 z-50 fixed bg-lime-100/70 supports-backdrop-filter:bg-lime-100/60 dark:bg-stone-900/70 dark:supports-backdrop-filter:bg-stone-900/60 backdrop-blur-xl border-border/50 border-b w-full">
             <div className="flex justify-between items-center mx-auto px-4 max-w-7xl h-16 font-mono text-sm container">
@@ -30,7 +32,7 @@ export default function Header() {
 
                 {/* Desktop Navigation */}
                 <nav className="hidden md:flex items-center gap-6">
-                    <SignedIn>
+                    <Show when="signed-in">
                         <>
                             <div className="flex items-center gap-4 text-muted-foreground">
                                 <Link href="/home" className="font-medium hover:text-foreground text-sm transition-colors">
@@ -47,24 +49,31 @@ export default function Header() {
                             </div>
                             <div className="mx-2 bg-border w-px h-6"></div>
                             <div className="flex items-center gap-2">
+                                {isInstallable && (
+                                    <Button variant="outline" size="sm" onClick={installApp} className="hidden lg:flex items-center gap-2 mr-2">
+                                        <Download className="w-4 h-4" />
+                                        Install App
+                                    </Button>
+                                )}
                                 <ModeToggle />
                                 <Link href="/manage" className="hover:bg-accent focus:bg-accent p-2 rounded-md outline-none text-muted-foreground transition-colors hover:text-accent-foreground">
                                     <Settings className="w-5 h-5" />
                                     <span className="sr-only">Settings</span>
                                 </Link>
-                                <UserButton afterSignOutUrl="/" appearance={{
-                                    elements: {
-                                        avatarBox: "w-8 h-8 focus:ring-2 focus:ring-ring focus:outline-none rounded-full"
-                                    }
-                                }} />
+                                <UserButton
+                                    appearance={{
+                                        elements: {
+                                            avatarBox: "w-8 h-8 focus:ring-2 focus:ring-ring focus:outline-none rounded-full"
+                                        }
+                                    }} />
                             </div>
                         </>
-                    </SignedIn>
+                    </Show>
                 </nav>
 
                 {/* Mobile Navigation */}
                 <div className="md:hidden">
-                    <SignedIn>
+                    <Show when="signed-in">
                         <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(true)}>
                             <Menu className="w-5 h-5" />
                             <span className="sr-only">Toggle menu</span>
@@ -92,6 +101,12 @@ export default function Header() {
                                 <Link href="/manage" className="font-medium hover:text-foreground text-lg" onClick={() => setMobileMenuOpen(false)}>
                                     Settings
                                 </Link>
+                                {isInstallable && (
+                                    <button type="button" onClick={installApp} className="flex items-center gap-4 font-medium text-emerald-600 hover:text-foreground dark:text-emerald-400 text-lg text-left cursor-pointer">
+                                        <Download className="w-5 h-5" />
+                                        Install App
+                                    </button>
+                                )}
                                 <div className="bg-border w-full h-px"></div>
                                 <div className="flex justify-between items-center gap-4">
                                     <span className="font-medium text-muted-foreground">Theme</span>
@@ -99,11 +114,12 @@ export default function Header() {
                                 </div>
                                 <div className="flex justify-between items-center gap-4">
                                     <span className="font-medium text-muted-foreground">Profile</span>
-                                    <UserButton afterSignOutUrl="/" appearance={{
-                                        elements: {
-                                            avatarBox: "w-8 h-8 focus:ring-2 focus:ring-ring focus:outline-none rounded-full"
-                                        }
-                                    }} />
+                                    <UserButton
+                                        appearance={{
+                                            elements: {
+                                                avatarBox: "w-8 h-8 focus:ring-2 focus:ring-ring focus:outline-none rounded-full"
+                                            }
+                                        }} />
                                 </div>
                                 <div className="bg-border w-full h-px"></div>
                                 <div className="flex gap-4 mt-4">
@@ -117,7 +133,7 @@ export default function Header() {
                                 </div>
                             </div>
                         </MobileMenu>
-                    </SignedIn>
+                    </Show>
                 </div>
             </div>
         </header>
