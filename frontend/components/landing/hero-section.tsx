@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { SignedOut } from "@clerk/nextjs";
+import { Show } from "@clerk/nextjs";
 import Link from "next/link";
 import { motion } from "framer-motion";
 
@@ -24,10 +24,8 @@ export function HeroSection() {
             </span>
         </Link>
       </div>
-
       {/* Background decoration */}
       <div className="top-0 left-1/2 -z-10 absolute bg-emerald-500/20 dark:bg-emerald-500/10 blur-[120px] rounded-full w-[800px] h-[400px] -translate-x-1/2 pointer-events-none" />
-
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -50,7 +48,7 @@ export function HeroSection() {
         </p>
 
         <div className="flex sm:flex-row flex-col gap-4 mb-16">
-          <SignedOut>
+          <Show when="signed-out">
             <Link href="/sign-up">
               <Button size="lg" className="bg-emerald-600 hover:bg-emerald-700 shadow-emerald-500/25 shadow-lg px-8 w-full sm:w-auto h-12 text-white text-base hover:scale-105 transition-all cursor-pointer">
                 Start Tracking for Free
@@ -61,7 +59,7 @@ export function HeroSection() {
                 Sign In
               </Button>
             </Link>
-          </SignedOut>
+          </Show>
         </div>
 
         <motion.div 

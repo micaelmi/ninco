@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Github, Mail } from "lucide-react";
 import { FeedbackDialog } from "@/components/feedback-dialog";
-import { SignedIn } from "@clerk/nextjs";
+import { Show } from "@clerk/nextjs";
 
 export default function Footer() {
   return (
@@ -29,7 +29,7 @@ export default function Footer() {
           </div>
 
           {/* Navigation */}
-          <SignedIn>
+          <Show when="signed-in">
           <nav className="flex flex-wrap justify-center gap-x-8 gap-y-4 font-medium text-sm">
             <Link href="/home" className="text-muted-foreground hover:text-primary transition-colors">
               Dashboard
@@ -49,7 +49,7 @@ export default function Footer() {
               </button>
             </FeedbackDialog>
           </nav>
-          </SignedIn>
+          </Show>
 
           {/* Social & Contact */}
           <div className="flex items-center gap-4">
