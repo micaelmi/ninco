@@ -15,6 +15,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useUpdateAccount, useCreateAccount } from '@/lib/hooks/use-accounts';
 import { useCurrencies } from '@/lib/hooks/use-currencies';
 import { useUser } from '@/lib/hooks/use-user';
@@ -29,6 +30,7 @@ const accountFormSchema = z.object({
   color: z.string().min(1),
   icon: z.string().min(1),
   currencyCode: z.string().optional(),
+  isVisible: z.boolean(),
 });
 
 type AccountFormValues = z.infer<typeof accountFormSchema>;
@@ -41,6 +43,7 @@ interface AccountFormProps {
     color: string;
     icon: string;
     currencyCode?: string | null;
+    isVisible?: boolean;
   };
   onSuccess?: () => void;
   onCancel: () => void;
@@ -65,6 +68,7 @@ export function AccountForm({ accountId, initialData, onSuccess, onCancel }: Acc
       color: initialData?.color || CATEGORY_COLORS[0].value,
       icon: initialData?.icon || 'Wallet',
       currencyCode: initialData?.currencyCode || userPref?.preferredCurrencyCode || 'USD',
+      isVisible: initialData?.isVisible ?? true,
     },
   });
 
@@ -127,6 +131,41 @@ export function AccountForm({ accountId, initialData, onSuccess, onCancel }: Acc
           isLoading={currenciesLoading}
         />
 
+        <FormField
+          control={form.control}
+          name="isVisible"
+          render={({ field }) => (
+            <FormItem className="space-y-3">
+              <FormLabel>Dashboard Visibility</FormLabel>
+              <FormControl>
+                <RadioGroup
+                  onValueChange={(value) => field.onChange(value === "true")}
+                  defaultValue={field.value ? "true" : "false"}
+                  className="flex flex-col space-y-2"
+                >
+                  <FormItem className="flex items-center space-x-3 space-y-0">
+                    <FormControl>
+                      <RadioGroupItem value="true" />
+                    </FormControl>
+                    <FormLabel className="font-normal cursor-pointer">
+                      Show balance in total dashboard
+                    </FormLabel>
+                  </FormItem>
+                  <FormItem className="flex items-center space-x-3 space-y-0">
+                    <FormControl>
+                      <RadioGroupItem value="false" />
+                    </FormControl>
+                    <FormLabel className="font-normal cursor-pointer">
+                      Don't show balance in total dashboard
+                    </FormLabel>
+                  </FormItem>
+                </RadioGroup>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         {/* Color Picker — reused from category form */}
         <div className="space-y-3">
           <FormLabel>Color</FormLabel>
@@ -137,8 +176,8 @@ export function AccountForm({ accountId, initialData, onSuccess, onCancel }: Acc
                 type="button"
                 className={cn(
                   "flex justify-center items-center border-2 rounded-full w-8 h-8 transition-all cursor-pointer",
-                  form.watch('color') === color.value 
-                    ? "border-primary scale-110 shadow-md" 
+                  form.watch('color') === color.value
+                    ? "border-primary scale-110 shadow-md"
                     : "border-transparent hover:scale-105"
                 )}
                 style={{ backgroundColor: color.value }}
@@ -167,7 +206,7 @@ export function AccountForm({ accountId, initialData, onSuccess, onCancel }: Acc
               />
             </div>
           </div>
-          
+
           <div className="gap-2 grid grid-cols-6 bg-card p-2 border rounded-md max-h-[160px] overflow-y-auto">
             {filteredIcons.map((iconName) => (
               <button

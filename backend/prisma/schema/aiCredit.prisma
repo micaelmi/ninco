@@ -1,0 +1,9 @@
+model AiCredit {
+  id          String   @id @default(uuid())
+  userId      String   @unique
+  remaining   Int
+  limit       Int
+  periodStart DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

@@ -3,16 +3,31 @@ import { Webhook } from 'svix';
 import { prisma } from '../../lib/prisma';
 import { env } from '../../lib/env';
 
+const AI_LIMITS = { normal: 10, premium: 100 } as const;
+
+interface ClerkUserEventData {
+  id: string;
+  email_addresses: { id: string; email_address: string }[];
+  primary_email_address_id: string;
+  first_name: string | null;
+  last_name: string | null;
+  image_url: string | null;
+}
+
+interface ClerkSubscriptionEventData {
+  id: string;
+  user_id: string;
+  plan: {
+    id: string;
+    name: string;
+    slug: string;
+  };
+  status: string;
+}
+
 interface ClerkWebhookEvent {
   type: string;
-  data: {
-    id: string;
-    email_addresses: { id: string; email_address: string }[];
-    primary_email_address_id: string;
-    first_name: string | null;
-    last_name: string | null;
-    image_url: string | null;
-  };
+  data: ClerkUserEventData | ClerkSubscriptionEventData;
 }
 
 export async function clerkSync(app: FastifyInstance) {
@@ -56,19 +71,21 @@ export async function clerkSync(app: FastifyInstance) {
       return reply.status(400).send({ error: 'Invalid signature' });
     }
 
-    const { id } = evt.data;
     const eventType = evt.type;
+    request.log.info(`Webhook received: ${eventType}`);
 
-    request.log.info(`Webhook received: ${eventType} for user ${id}`);
-
+    // ── User events ──────────────────────────────────────────────────
     if (eventType === 'user.created' || eventType === 'user.updated') {
+      const data = evt.data as ClerkUserEventData;
+      const { id } = data;
+
       const { 
         email_addresses, 
         primary_email_address_id, 
         first_name, 
         last_name, 
         image_url 
-      } = evt.data;
+      } = data;
       
       const primaryEmail = email_addresses.find(
         (email) => email.id === primary_email_address_id
@@ -106,15 +123,108 @@ export async function clerkSync(app: FastifyInstance) {
               icon: 'Bank',
               currencyCode: 'USD'
             }
+          },
+          aiCredit: {
+            create: {
+              remaining: AI_LIMITS.normal,
+              limit: AI_LIMITS.normal,
+              periodStart: new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), 1)),
+            }
           }
         },
       });
     }
 
     if (eventType === 'user.deleted') {
+      const data = evt.data as ClerkUserEventData;
       await prisma.user.delete({
-        where: { id },
+        where: { id: data.id },
       });
+    }
+
+    // ── Subscription events ──────────────────────────────────────────
+    if (
+      eventType === 'subscription.created' ||
+      eventType === 'subscription.updated'
+    ) {
+      try {
+        const data = evt.data as any;
+        require('fs').appendFileSync('C:\\tmp\\clerk_webhook.log', JSON.stringify({ type: eventType, data }) + '\n');
+        
+        // Find user_id inside payer object
+        const userId = data.payer?.user_id || data.user_id || data.id;
+
+        // Clerk's subscription object stores plans inside `items` array
+        const items = data.items || [];
+        const isPremium = items.some((item: any) => 
+          item.plan?.slug?.toLowerCase().includes('premium') && 
+          (item.status === 'active' || item.status === 'trialing' || item.status === 'past_due')
+        );
+
+        const targetType = isPremium ? 'premium' : 'normal';
+        const targetLimit = isPremium ? AI_LIMITS.premium : AI_LIMITS.normal;
+
+        const userTypeRecord = await prisma.userType.findUnique({
+          where: { type: targetType },
+        });
+
+        if (userTypeRecord && userId) {
+          await prisma.user.update({
+            where: { id: userId },
+            data: { userTypeId: userTypeRecord.id },
+          });
+        }
+
+        // Sync AI credit limit
+        if (userId) {
+          const credit = await prisma.aiCredit.findUnique({ where: { userId } });
+          if (credit) {
+            const newRemaining = isPremium
+              ? credit.remaining + (targetLimit - credit.limit) // upgrade: top up
+              : Math.min(credit.remaining, targetLimit);         // downgrade: cap
+
+            await prisma.aiCredit.update({
+              where: { userId },
+              data: { limit: targetLimit, remaining: Math.max(newRemaining, 0) },
+            });
+          }
+        }
+
+        request.log.info(`Subscription ${eventType}: user ${userId} → ${targetType} (limit: ${targetLimit})`);
+      } catch (err: any) {
+        require('fs').appendFileSync('C:\\tmp\\clerk_webhook.log', 'ERROR: ' + err.stack + '\n');
+        throw err;
+      }
+    }
+
+    if (eventType === 'subscription.canceled') {
+      const data = evt.data as ClerkSubscriptionEventData | any;
+      const userId = data.payer?.user_id || data.user_id || data.id;
+
+      const normalType = await prisma.userType.findUnique({
+        where: { type: 'normal' },
+      });
+
+      if (normalType) {
+        await prisma.user.update({
+          where: { id: userId },
+          data: { userTypeId: normalType.id },
+        });
+      }
+
+      // Reset AI credits to normal limits
+      const credit = await prisma.aiCredit.findUnique({ where: { userId } });
+      if (credit) {
+        await prisma.aiCredit.update({
+          where: { userId },
+          data: {
+            limit: AI_LIMITS.normal,
+            remaining: Math.min(credit.remaining, AI_LIMITS.normal),
+          },
+        });
+      }
+
+      request.log.info(`Subscription canceled: user ${userId} → normal`);
     }
 
     return reply.status(200).send({ success: true });

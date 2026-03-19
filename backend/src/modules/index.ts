@@ -7,6 +7,7 @@ import { webhookRoutes } from './webhooks';
 import { accountRoutes } from './accounts';
 import { currencyRoutes } from './currencies';
 import { userRoutes } from './users';
+import { aiCreditRoutes } from './ai-credits';
 
 import { feedbackRoutes } from './feedback/feedback.routes';
 
@@ -28,5 +29,6 @@ export async function appRoutes(app: FastifyInstance) {
     protectedApp.register(feedbackRoutes, { prefix: '/feedback' });
     protectedApp.register(currencyRoutes);
     protectedApp.register(userRoutes, { prefix: '/users' });
+    protectedApp.register(aiCreditRoutes);
   });
 }

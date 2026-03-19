@@ -14,6 +14,7 @@ export async function createAccount(app: FastifyInstance) {
         color: z.string(),
         icon: z.string(),
         currencyCode: z.string().optional(),
+        isVisible: z.boolean().optional(),
       }),
       response: {
         201: z.object({
@@ -21,13 +22,14 @@ export async function createAccount(app: FastifyInstance) {
           name: z.string(),
           balance: z.string(),
           currencyCode: z.string().nullable(),
+          isVisible: z.boolean(),
         }),
         400: z.object({ message: z.string() }),
       },
     },
   }, async (request, reply) => {
     const userId = request.userId;
-    const { name, balance, color, icon, currencyCode } = request.body;
+    const { name, balance, color, icon, currencyCode, isVisible } = request.body;
     
     // Ensure user exists locally
     const userExists = await prisma.user.findUnique({
@@ -49,6 +51,7 @@ export async function createAccount(app: FastifyInstance) {
           color,
           icon,
           currencyCode: currencyCode || 'USD',
+          isVisible: isVisible ?? true,
         },
       });
 
@@ -57,6 +60,7 @@ export async function createAccount(app: FastifyInstance) {
         name: account.name,
         balance: account.balance.toString(),
         currencyCode: account.currencyCode,
+        isVisible: account.isVisible,
       });
     } catch (error: any) {
       if (error.code === 'P2003') {

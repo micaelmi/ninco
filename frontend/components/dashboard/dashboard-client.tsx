@@ -34,13 +34,22 @@ import { title } from 'process';
 export function DashboardClient({ userName }: { userName: string }) {
   const [mounted, setMounted] = useState(false);
   const [showBalance, setShowBalance] = useState(true);
+  const [hasSetDefaultPeriod, setHasSetDefaultPeriod] = useState(false);
+  
   const { preset, setPreset, navigate, label, customRange, setCustomRange, filters } = useDateRange('week');
+  const { data: userPref, isLoading: userPrefLoading } = useUser();
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  const { data: userPref, isLoading: userPrefLoading } = useUser();
+  useEffect(() => {
+    if (userPref?.defaultPeriod && !hasSetDefaultPeriod) {
+      setPreset(userPref.defaultPeriod as any);
+      setHasSetDefaultPeriod(true);
+    }
+  }, [userPref?.defaultPeriod, hasSetDefaultPeriod, setPreset]);
+
   const prefCode = userPref?.preferredCurrencyCode || 'USD';
   
   const { data: rates, isLoading: ratesLoading } = useExchangeRates(prefCode);
@@ -49,10 +58,12 @@ export function DashboardClient({ userName }: { userName: string }) {
 
   const calculateConvertedBalance = () => {
     if (!summary?.accounts) return 0;
-    return summary.accounts.reduce((acc, account) => {
-      const code = account.currencyCode || 'USD';
-      return acc + convertCurrency(account.balance, code, prefCode, rates);
-    }, 0);
+    return summary.accounts
+      .filter((account) => account.isVisible !== false)
+      .reduce((acc, account) => {
+        const code = account.currencyCode || 'USD';
+        return acc + convertCurrency(account.balance, code, prefCode, rates);
+      }, 0);
   };
 
   const calculateConvertedTotal = (val?: number) => {
@@ -133,10 +144,15 @@ export function DashboardClient({ userName }: { userName: string }) {
               </div>
             </CardHeader>
             <CardContent>
-              <div className={cn("rounded-lg w-fit font-mono font-bold text-3xl transition-colors", !showBalance && "text-gray-300 bg-gray-300")}>
-                {formatCurrency(calculateConvertedBalance(), prefCode)}
-              </div>
-              <p className="mt-1 text-muted-foreground text-xs">Across all your accounts in {prefCode}</p>
+              <AccountSummaryPopover
+                accounts={summary?.accounts || []}
+                trigger={
+                  <div className={cn("rounded-lg w-fit font-mono font-bold text-3xl transition-all cursor-pointer hover:opacity-80 active:scale-95", !showBalance && "text-gray-300 bg-gray-300")}>
+                    {formatCurrency(calculateConvertedBalance(), prefCode)}
+                  </div>
+                }
+              />
+              <p className="mt-1 text-muted-foreground text-xs">Across all your visible accounts in {prefCode}</p>
             </CardContent>
           </Card>
         </MotionDiv>

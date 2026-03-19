@@ -60,6 +60,7 @@ export interface Account {
   createdAt: Date;
   updatedAt: Date;
   currencyCode?: string | null;
+  isVisible: boolean;
 }
 
 export interface CreateAccountInput {
@@ -68,6 +69,7 @@ export interface CreateAccountInput {
   color: string;
   icon: string;
   currencyCode?: string;
+  isVisible?: boolean;
 }
 
 export interface UpdateAccountInput {
@@ -76,6 +78,7 @@ export interface UpdateAccountInput {
   color?: string;
   icon?: string;
   currencyCode?: string;
+  isVisible?: boolean;
 }
 
 // Category Types
@@ -156,6 +159,7 @@ export interface DashboardSummary {
     color: string;
     icon: string;
     currencyCode?: string | null;
+    isVisible: boolean;
   }[];
   categoryIncome: {
     id: string;

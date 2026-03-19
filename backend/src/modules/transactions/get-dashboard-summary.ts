@@ -30,6 +30,7 @@ export async function getDashboardSummary(app: FastifyInstance) {
             color: z.string(),
             icon: z.string(),
             currencyCode: z.string().nullable().optional(),
+            isVisible: z.boolean(),
           })),
           categoryIncome: z.array(z.object({
             id: z.string(),
@@ -60,6 +61,7 @@ export async function getDashboardSummary(app: FastifyInstance) {
         color: true,
         icon: true,
         currencyCode: true,
+        isVisible: true,
       },
     });
 

@@ -17,6 +17,7 @@ export async function updateAccount(app: FastifyInstance) {
         color: z.string().optional(),
         icon: z.string().optional(),
         currencyCode: z.string().optional(),
+        isVisible: z.boolean().optional(),
       }),
       response: {
         200: z.object({
@@ -24,6 +25,7 @@ export async function updateAccount(app: FastifyInstance) {
           name: z.string(),
           balance: z.string(),
           currencyCode: z.string().nullable(),
+          isVisible: z.boolean(),
         }),
         404: z.object({ message: z.string() }),
       },
@@ -31,7 +33,7 @@ export async function updateAccount(app: FastifyInstance) {
   }, async (request, reply) => {
     const userId = request.userId;
     const { id } = request.params;
-    const { name, balance, color, icon, currencyCode } = request.body;
+    const { name, balance, color, icon, currencyCode, isVisible } = request.body;
 
     const existing = await prisma.account.findUnique({ where: { id, userId } });
     if (!existing) {
@@ -40,7 +42,7 @@ export async function updateAccount(app: FastifyInstance) {
 
     const account = await prisma.account.update({
       where: { id, userId },
-      data: { name, balance, color, icon, currencyCode },
+      data: { name, balance, color, icon, currencyCode, isVisible },
     });
 
     return {
@@ -48,6 +50,7 @@ export async function updateAccount(app: FastifyInstance) {
       name: account.name,
       balance: account.balance.toString(),
       currencyCode: account.currencyCode,
+      isVisible: account.isVisible,
     };
   });
 }

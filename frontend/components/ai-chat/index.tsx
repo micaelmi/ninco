@@ -3,14 +3,16 @@
 import { useState } from 'react';
 import { Sparkles } from 'lucide-react';
 import { useUser } from '@clerk/nextjs';
+import { usePathname } from 'next/navigation';
 import { AiChatPanel } from './ai-chat-panel';
 import { cn } from '@/lib/utils';
 
 export function AiChat() {
   const [isOpen, setIsOpen] = useState(false);
   const { isSignedIn } = useUser();
+  const pathname = usePathname();
 
-  if (!isSignedIn) return null;
+  if (!isSignedIn || pathname === '/pricing') return null;
 
   return (
     <>

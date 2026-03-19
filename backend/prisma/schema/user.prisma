@@ -7,11 +7,15 @@ model User {
   updatedAt             DateTime @updatedAt
   userTypeId            String?
   preferredCurrencyCode String?  @default("USD")
+  defaultAccountId      String?
+  defaultPeriod         String?  @default("week")
 
   userType          UserType?     @relation(fields: [userTypeId], references: [id])
   preferredCurrency Currency?     @relation(fields: [preferredCurrencyCode], references: [code])
-  accounts          Account[]
+  defaultAccount    Account?      @relation("UserDefaultAccount", fields: [defaultAccountId], references: [id])
+  accounts          Account[]     @relation("UserAccounts")
   categories        Category[]
   tags              Tag[]
   transactions      Transaction[]
+  aiCredit          AiCredit?
 }
