@@ -8,6 +8,7 @@ import { FeaturesSection } from "@/components/landing/features-section";
 import { HowItWorksSection } from "@/components/landing/how-it-works-section";
 import { FAQSection } from "@/components/landing/faq-section";
 import { CTASection } from "@/components/landing/cta-section";
+import { PainSection } from "@/components/landing/pain-section";
 
 export default async function Home() {
   const { userId } = await auth();
@@ -23,6 +24,7 @@ export default async function Home() {
       <main className="flex flex-col flex-1 w-full">
         {/* Sections are ordered for maximum conversion and SEO flow */}
         <HeroSection />
+        <PainSection />
         <FeaturesSection />
         <HowItWorksSection />
         <FAQSection />
