@@ -91,8 +91,8 @@ importers:
         specifier: ^7.0.11
         version: 7.0.11
       '@types/pg':
-        specifier: ^8.16.0
-        version: 8.18.0
+        specifier: ^8.11.11
+        version: 8.11.11
       get-tsconfig:
         specifier: ^4.13.6
         version: 4.13.6
@@ -632,9 +632,6 @@ packages:
 
   '@types/pg@8.11.11':
     resolution: {integrity: sha512-kGT1qKM8wJQ5qlawUrEkXgvMSXoV213KfMGXcwfDwUIfUHXqXYXOfS1nE1LINRJVVVx5wCm70XnFlMHaIcQAfw==}
-
-  '@types/pg@8.18.0':
-    resolution: {integrity: sha512-gT+oueVQkqnj6ajGJXblFR4iavIXWsGAFCk3dP4Kki5+a9R4NMt0JARdk6s8cUKcfUoqP5dAtDSLU8xYUTFV+Q==}
 
   '@types/react@19.2.14':
     resolution: {integrity: sha512-ilcTH/UniCkMdtexkoCN0bI7pMcJDvmQFPvuPvmEaYA/NSfFTAgdUSLAoVjaRJm7+6PvcM+q1zYOwS4wTYMF9w==}
@@ -2137,12 +2134,6 @@ snapshots:
       '@types/node': 22.19.15
       pg-protocol: 1.13.0
       pg-types: 4.1.0
-
-  '@types/pg@8.18.0':
-    dependencies:
-      '@types/node': 25.2.1
-      pg-protocol: 1.13.0
-      pg-types: 2.2.0
 
   '@types/react@19.2.14':
     dependencies:

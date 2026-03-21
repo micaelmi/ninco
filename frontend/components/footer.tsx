@@ -40,6 +40,9 @@ export default function Footer() {
             <Link href="/manage" className="text-muted-foreground hover:text-primary transition-colors">
               Settings
             </Link>
+            <Link href="/reports" className="text-muted-foreground hover:text-primary transition-colors">
+              Reports
+            </Link>
             <FeedbackDialog>
               <button 
                 type="button"

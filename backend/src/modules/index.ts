@@ -8,6 +8,7 @@ import { accountRoutes } from './accounts';
 import { currencyRoutes } from './currencies';
 import { userRoutes } from './users';
 import { aiCreditRoutes } from './ai-credits';
+import { reportRoutes } from './reports';
 
 import { feedbackRoutes } from './feedback/feedback.routes';
 
@@ -30,5 +31,6 @@ export async function appRoutes(app: FastifyInstance) {
     protectedApp.register(currencyRoutes);
     protectedApp.register(userRoutes, { prefix: '/users' });
     protectedApp.register(aiCreditRoutes);
+    protectedApp.register(reportRoutes);
   });
 }

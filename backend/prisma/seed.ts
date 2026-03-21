@@ -59,6 +59,24 @@ async function main() {
 
     console.log('User created/found');
 
+    // 1.5 Create AI Credits
+    await prisma.aiCredit.upsert({
+      where: { userId },
+      update: {
+        remaining: 50,
+        limit: 50,
+        periodStart: new Date(),
+      },
+      create: {
+        userId,
+        remaining: 50,
+        limit: 50,
+        periodStart: new Date(),
+      },
+    });
+
+    console.log('AI credits seeded');
+
     // 2. Cleanup existing data to start fresh (Optional, but good for consistent seeding)
     // Note: We don't delete the user.
     await prisma.transaction.deleteMany({ where: { userId } });

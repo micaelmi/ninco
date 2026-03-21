@@ -174,3 +174,59 @@ export interface DashboardSummary {
     color: string;
   }[];
 }
+
+// Report Types
+export interface ReportData {
+  period: {
+    from: string;
+    to: string;
+    weeks: number;
+  };
+  totals: {
+    income: number;
+    expenses: number;
+    savings: number;
+  };
+  weeklyAverages: {
+    income: number;
+    expenses: number;
+    savings: number;
+  };
+  topCategories: {
+    income: CategoryBreakdown[];
+    expense: CategoryBreakdown[];
+  };
+  topTags: {
+    id: string;
+    name: string;
+    count: number;
+    totalAmount: number;
+  }[];
+  transactionCount: number;
+  weeklyBreakdown: {
+    week: string;
+    income: number;
+    expense: number;
+  }[];
+}
+
+export interface CategoryBreakdown {
+  id: string;
+  name: string;
+  amount: number;
+  color: string;
+  percentage: number;
+}
+
+export interface ReportInsights {
+  summary: string;
+  tips: string[];
+  patterns: string[];
+}
+
+export interface GeneratedReport {
+  data: ReportData;
+  insights: ReportInsights;
+  generatedAt: string;
+  periodLabel: string;
+}
