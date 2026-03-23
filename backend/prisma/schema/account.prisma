@@ -6,9 +6,11 @@ model Account {
   icon         String
   userId       String
   currencyCode String?
+  isVisible    Boolean       @default(true)
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
-  user         User          @relation(fields: [userId], references: [id])
+  user            User          @relation("UserAccounts", fields: [userId], references: [id])
+  defaultForUsers User[]        @relation("UserDefaultAccount")
   currency     Currency?     @relation(fields: [currencyCode], references: [code])
   transactions Transaction[]
 }

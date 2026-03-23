@@ -15,6 +15,8 @@ export async function getMe(app: FastifyInstance) {
           name: z.string().nullable(),
           imageUrl: z.string().nullable(),
           preferredCurrencyCode: z.string().nullable(),
+          defaultAccountId: z.string().nullable(),
+          defaultPeriod: z.string().nullable(),
           userType: z.object({
             type: z.string(),
             description: z.string().nullable(),
@@ -41,6 +43,8 @@ export async function getMe(app: FastifyInstance) {
       name: user.name,
       imageUrl: user.imageUrl,
       preferredCurrencyCode: user.preferredCurrencyCode,
+      defaultAccountId: user.defaultAccountId ?? null,
+      defaultPeriod: user.defaultPeriod ?? null,
       userType: user.userType ? {
         type: user.userType.type,
         description: user.userType.description,

@@ -3,18 +3,18 @@ import { PieChart, TrendingUp, ShieldCheck, Wallet, ArrowRightLeft, Target } fro
 export function FeaturesSection() {
   const features = [
     {
-      title: "Intuitive Expense Tracking",
+      title: "Track your money without the effort",
       description: "Log transactions in seconds. Categorize your spending automatically and see exactly where your money goes every month.",
       icon: <Wallet className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
     },
     {
-      title: "Visual Wealth Analytics",
-      description: "Understand your financial health through beautiful, interactive charts. Spot trends and adjust your spending habits.",
+      title: "Spot spending patterns easily",
+      description: "Understand your money through beautiful, interactive charts. Spot trends before they become problems.",
       icon: <PieChart className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
     },
     {
-      title: "Multi-Account Syncing",
-      description: "Manage multiple bank accounts and credit cards from a single, unified dashboard. Get the complete picture of your wealth.",
+      title: "All your accounts, one clear picture",
+      description: "Manage multiple bank accounts from a single, unified dashboard. Keep track of everything in one place.",
       icon: <ArrowRightLeft className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
     },
     // {
@@ -40,10 +40,10 @@ export function FeaturesSection() {
         <div className="mx-auto mb-16 max-w-3xl text-center">
           <h2 className="font-semibold text-emerald-600 text-base uppercase tracking-wide">Features</h2>
           <p className="mt-2 font-extrabold text-stone-900 dark:text-stone-50 text-3xl sm:text-4xl leading-8 tracking-tight">
-            Everything you need to manage money smarter
+            See exactly where your money goes — automatically
           </p>
           <p className="mx-auto mt-4 max-w-2xl text-stone-500 dark:text-stone-400 text-xl">
-            Ninco replaces your chaotic spreadsheets with beautiful, automated tools designed to build wealth.
+            Ninco replaces chaotic spreadsheets and bloated apps with simple, automated tools designed to keep you on budget.
           </p>
         </div>
 

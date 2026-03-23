@@ -7,7 +7,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/mode-toggle";
 import { MobileMenu } from "@/components/mobile-menu";
-import { Menu, Settings, Download } from "lucide-react";
+import { Menu, Settings, Download, FileBarChart } from "lucide-react";
 import { FeedbackDialog } from "@/components/feedback-dialog";
 import { usePWA } from "@/providers/pwa-provider";
 
@@ -40,6 +40,9 @@ export default function Header() {
                                 </Link>
                                 <Link href="/transactions" className="font-medium hover:text-foreground text-sm transition-colors">
                                     Transactions
+                                </Link>
+                                <Link href="/reports" className="font-medium hover:text-foreground text-sm transition-colors">
+                                    Reports
                                 </Link>
                                 <FeedbackDialog>
                                     <button type="button" className="font-medium hover:text-foreground text-sm transition-colors cursor-pointer">
@@ -92,6 +95,9 @@ export default function Header() {
                                 </Link>
                                 <Link href="/transactions" className="font-medium hover:text-foreground text-lg" onClick={() => setMobileMenuOpen(false)}>
                                     Transactions
+                                </Link>
+                                <Link href="/reports" className="font-medium hover:text-foreground text-lg" onClick={() => setMobileMenuOpen(false)}>
+                                    Reports
                                 </Link>
                                 <FeedbackDialog>
                                     <button type="button" className="font-medium hover:text-foreground text-lg text-left cursor-pointer">

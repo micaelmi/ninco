@@ -60,6 +60,7 @@ export interface Account {
   createdAt: Date;
   updatedAt: Date;
   currencyCode?: string | null;
+  isVisible: boolean;
 }
 
 export interface CreateAccountInput {
@@ -68,6 +69,7 @@ export interface CreateAccountInput {
   color: string;
   icon: string;
   currencyCode?: string;
+  isVisible?: boolean;
 }
 
 export interface UpdateAccountInput {
@@ -76,6 +78,7 @@ export interface UpdateAccountInput {
   color?: string;
   icon?: string;
   currencyCode?: string;
+  isVisible?: boolean;
 }
 
 // Category Types
@@ -156,6 +159,7 @@ export interface DashboardSummary {
     color: string;
     icon: string;
     currencyCode?: string | null;
+    isVisible: boolean;
   }[];
   categoryIncome: {
     id: string;
@@ -169,4 +173,60 @@ export interface DashboardSummary {
     value: number;
     color: string;
   }[];
+}
+
+// Report Types
+export interface ReportData {
+  period: {
+    from: string;
+    to: string;
+    weeks: number;
+  };
+  totals: {
+    income: number;
+    expenses: number;
+    savings: number;
+  };
+  weeklyAverages: {
+    income: number;
+    expenses: number;
+    savings: number;
+  };
+  topCategories: {
+    income: CategoryBreakdown[];
+    expense: CategoryBreakdown[];
+  };
+  topTags: {
+    id: string;
+    name: string;
+    count: number;
+    totalAmount: number;
+  }[];
+  transactionCount: number;
+  weeklyBreakdown: {
+    week: string;
+    income: number;
+    expense: number;
+  }[];
+}
+
+export interface CategoryBreakdown {
+  id: string;
+  name: string;
+  amount: number;
+  color: string;
+  percentage: number;
+}
+
+export interface ReportInsights {
+  summary: string;
+  tips: string[];
+  patterns: string[];
+}
+
+export interface GeneratedReport {
+  data: ReportData;
+  insights: ReportInsights;
+  generatedAt: string;
+  periodLabel: string;
 }

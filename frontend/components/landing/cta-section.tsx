@@ -12,16 +12,16 @@ export function CTASection() {
       <div className="-bottom-24 -left-24 absolute bg-teal-500 dark:bg-teal-800 opacity-50 blur-3xl rounded-full w-96 h-96 pointer-events-none" />
       <div className="z-10 relative mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl text-center">
         <h2 className="mb-6 font-extrabold text-white text-4xl sm:text-5xl">
-          Ready to take charge of your financial future?
+          Get control of your money today.
         </h2>
         <p className="mx-auto mb-10 max-w-2xl text-emerald-100 text-xl">
-          Join users who are already tracking their wealth, cutting unnecessary expenses, and saving for their goals with Ninco.
+          Say goodbye to complex spreadsheets and bloated apps. Join users who are tracking their money the simple, modern way.
         </p>
         
         <Show when="signed-out">
           <Link href="/sign-up">
             <Button size="lg" className="group bg-white hover:bg-stone-50 shadow-xl px-10 border-none h-14 text-emerald-700 text-lg hover:scale-105 transition-transform">
-              Start Tracking Today - It's Free
+              Start tracking your money — Free
               <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
             </Button>
           </Link>

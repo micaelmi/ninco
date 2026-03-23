@@ -6,24 +6,24 @@ import { ChevronDown } from "lucide-react";
 export function FAQSection() {
   const faqs = [
     {
-      question: "Is Ninco completely free to use?",
-      answer: "Yes! Currently, the core features of Ninco are completely free. We believe everyone deserves access to high-quality financial tools."
+      question: "Is this better than Excel?",
+      answer: "Yes. Spreadsheets require manual effort to build charts, calculate running balances, and categorize transactions. Ninco automates all of this into a beautiful dashboard that saves you time."
     },
     {
-      question: "How secure is my financial data?",
-      answer: "We use modern security protocols to protect your data. Your information is never sold to third parties, and we rely on Clerk for secure, enterprise-grade authentication."
+      question: "How long does setup take?",
+      answer: "Less than 2 minutes. There is no complex onboarding or tutorials to read. Just sign up and start adding your expenses immediately."
     },
     {
-      question: "Can I use Ninco on my mobile device?",
-      answer: "Absolutely. Ninco is designed as a website and app. You can install it directly to your home screen on iOS or Android for a native app experience."
+      question: "Do I need to connect my bank?",
+      answer: "No! Ninco tracks what you input by design. You don't have to link any bank accounts, which means you don't face syncing issues and your bank login remains 100% private."
     },
     {
-      question: "How is Ninco different from using a spreadsheet?",
-      answer: "Spreadsheets require manual effort to build charts, calculate running balances, and categorize transactions. Ninco automates all of this into a beautiful, dashboard interface that saves you time."
+      question: "Can I use it daily?",
+      answer: "Absolutely. Ninco is built for speed. Adding an expense takes two seconds, making it perfect for quick, daily tracking directly on your phone or desktop."
     },
     {
-      question: "Can I manage multiple accounts?",
-      answer: "Yes, you can create and track as many accounts (checking, savings, credit cards, cash) as you need to get a full picture of your net worth."
+      question: "Is it really free?",
+      answer: "Yes! The core tracking and dashboard features of Ninco are completely free. No credit card required. Some advanced features like AI insights are only available for premium users."
     }
   ];
 
@@ -43,8 +43,8 @@ export function FAQSection() {
 
         <div className="space-y-4">
           {faqs.map((faq, index) => (
-            <div 
-              key={index} 
+            <div
+              key={index}
               className="bg-stone-50 dark:bg-stone-900/30 border border-stone-200 dark:border-stone-800 rounded-xl overflow-hidden"
             >
               <button
@@ -55,17 +55,15 @@ export function FAQSection() {
                 <span className="font-semibold text-stone-900 dark:text-stone-50 text-lg">
                   {faq.question}
                 </span>
-                <ChevronDown 
-                  className={`w-5 h-5 text-stone-500 dark:text-stone-400 transition-transform duration-200 ${
-                    openIndex === index ? "rotate-180" : ""
-                  }`}
+                <ChevronDown
+                  className={`w-5 h-5 text-stone-500 dark:text-stone-400 transition-transform duration-200 ${openIndex === index ? "rotate-180" : ""
+                    }`}
                 />
               </button>
-              
-              <div 
-                className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                  openIndex === index ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
-                }`}
+
+              <div
+                className={`overflow-hidden transition-all duration-300 ease-in-out ${openIndex === index ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
+                  }`}
               >
                 <div className="px-6 pb-5 text-stone-600 dark:text-stone-400">
                   {faq.answer}

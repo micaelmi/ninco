@@ -23,14 +23,14 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL("https://ninco.app"),
   title: {
-    default: "Ninco",
+    default: "Ninco - Control your money",
     template: "%s | Ninco",
   },
   description: "Master your money with ease. Simple, powerful, and built for you.",
   keywords: ["Personal Finance", "Money Management", "Expense Tracker", "Budgeting", "Finance App", "Ninco"],
   applicationName: "Ninco",
   openGraph: {
-    title: "Ninco",
+    title: "Ninco - Control your money",
     description: "Master your money with ease. Simple, powerful, and built for you.",
     url: "https://ninco.app",
     siteName: "Ninco",
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Ninco",
+    title: "Ninco - Control your money",
     description: "Master your money with ease. Simple, powerful, and built for you.",
     images: ["/icon-512.png"],
   },
@@ -88,17 +88,17 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       ><ClerkProvider
-          signInForceRedirectUrl="/home"
-          signUpForceRedirectUrl="/home"
-          appearance={{
-            options: {
-              socialButtonsVariant: "iconButton",
-              logoImageUrl: "/favicon.ico",
-            },
-            variables: {
-              colorPrimary: "#10b981",
-            },
-          }}>
+        signInForceRedirectUrl="/home"
+        signUpForceRedirectUrl="/home"
+        appearance={{
+          options: {
+            socialButtonsVariant: "iconButton",
+            logoImageUrl: "/favicon.ico",
+          },
+          variables: {
+            colorPrimary: "#10b981",
+          },
+        }}>
           <ThemeProvider
             attribute="class"
             defaultTheme="light"

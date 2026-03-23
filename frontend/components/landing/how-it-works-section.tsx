@@ -3,18 +3,18 @@ import { UserPlus, ArrowRight, LineChart } from "lucide-react";
 export function HowItWorksSection() {
   const steps = [
     {
-      title: "Create an Account",
-      description: "Sign up in seconds. No credit card required, completely free to start tracking your finances.",
+      title: "Sign up in 30 seconds",
+      description: "No credit card required, completely free to start tracking your finances.",
       icon: <UserPlus className="w-8 h-8 text-emerald-600" />
     },
     {
-      title: "Add Your Transactions",
+      title: "Add expenses in seconds",
       description: "Log your income and expenses using our lightning-fast, intuitive entry forms designed for mobile and desktop.",
       icon: <ArrowRight className="w-8 h-8 text-emerald-600" />
     },
     {
-      title: "Grow Your Wealth",
-      description: "Watch as our automated charts and budgeting tools give you the insights needed to reach your financial goals.",
+      title: "Instantly see your money",
+      description: "Watch as our automated charts show you exactly where your money is going, without lifting a finger.",
       icon: <LineChart className="w-8 h-8 text-emerald-600" />
     }
   ];
@@ -24,10 +24,10 @@ export function HowItWorksSection() {
       <div className="mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
         <div className="mb-16 text-center">
           <h2 className="font-extrabold text-stone-900 dark:text-stone-50 text-3xl sm:text-4xl">
-            How Ninco Works
+            From zero to clarity in minutes
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-stone-500 dark:text-stone-400 text-xl">
-            From zero to financial clarity in three simple steps.
+            Three simple steps to finally take control.
           </p>
         </div>
 

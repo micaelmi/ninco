@@ -7,6 +7,8 @@ export interface UserPreferences {
   name: string | null;
   imageUrl: string | null;
   preferredCurrencyCode: string | null;
+  defaultAccountId: string | null;
+  defaultPeriod: string | null;
   userType: {
     type: string;
     description: string | null;
@@ -29,7 +31,7 @@ export function useUpdateUser() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: { preferredCurrencyCode?: string }) => {
+    mutationFn: async (data: { preferredCurrencyCode?: string, defaultAccountId?: string | null, defaultPeriod?: string | null }) => {
       const response = await apiClient.put('/users/me', data);
       return response.data as UserPreferences;
     },

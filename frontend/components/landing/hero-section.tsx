@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Show } from "@clerk/nextjs";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { Star, TrendingUp, TrendingDown, Coffee, ShoppingBag } from "lucide-react";
 
 export function HeroSection() {
   return (
@@ -33,25 +34,25 @@ export function HeroSection() {
         className="z-10 flex flex-col items-center mx-auto max-w-4xl"
       >
         <div className="inline-flex items-center gap-2 bg-emerald-100 dark:bg-emerald-900/30 mb-6 px-3 py-1 rounded-full ring-1 ring-emerald-500/20 ring-inset font-medium text-emerald-800 dark:text-emerald-300 text-sm">
-          <span>✨ New: Advanced Analytics</span>
+          <span>✨ Built by a 22-year-old who was tired of not knowing where his money went.</span>
         </div>
 
         <h1 className="mb-6 font-extrabold text-stone-900 dark:text-stone-50 text-5xl sm:text-7xl leading-[1.1] tracking-tight">
-          Take Control of Your <br />
+          Stop wondering <br />
           <span className="bg-clip-text bg-linear-to-r from-emerald-500 dark:from-emerald-400 to-teal-600 dark:to-teal-500 text-transparent">
-            Personal Finances
+            where your money went.
           </span>
         </h1>
         
         <p className="mb-10 max-w-2xl font-medium text-stone-600 dark:text-stone-400 text-lg sm:text-xl">
-          Track expenses, set visual budgets, and achieve financial freedom without the spreadsheet headaches. Built for simplicity and speed.
+          Track your spending, stay on budget, and finally feel in control — without the spreadsheet headaches or bloated finance apps. Setup takes 2 minutes.
         </p>
 
-        <div className="flex sm:flex-row flex-col gap-4 mb-16">
+        <div className="flex sm:flex-row flex-col items-center gap-4 mb-8">
           <Show when="signed-out">
             <Link href="/sign-up">
               <Button size="lg" className="bg-emerald-600 hover:bg-emerald-700 shadow-emerald-500/25 shadow-lg px-8 w-full sm:w-auto h-12 text-white text-base hover:scale-105 transition-all cursor-pointer">
-                Start Tracking for Free
+                Start Tracking Your Money — Free
               </Button>
             </Link>
             <Link href="/sign-in">
@@ -60,6 +61,16 @@ export function HeroSection() {
               </Button>
             </Link>
           </Show>
+        </div>
+
+        {/* Social Proof */}
+        <div className="flex flex-col items-center gap-2 mb-16">
+          <div className="flex gap-1 text-yellow-400">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <Star key={i} className="w-5 h-5 fill-current" />
+            ))}
+          </div>
+          <p className="text-stone-600 dark:text-stone-400 font-medium text-sm">"Finally a finance app I actually use daily."</p>
         </div>
 
         <motion.div 
@@ -81,7 +92,7 @@ export function HeroSection() {
               priority
             />
 
-            {/* Floating UI Element */}
+            {/* Floating UI Element 1: Total Balance */}
             <motion.div 
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -91,7 +102,43 @@ export function HeroSection() {
               <div className="mb-1 font-medium text-stone-500 dark:text-stone-400 text-sm">Total Balance</div>
               <div className="font-extrabold text-stone-900 dark:text-stone-50 text-3xl">$12,450.00</div>
               <div className="flex items-center gap-1 bg-emerald-50 dark:bg-emerald-900/30 mt-2 px-2 py-1 rounded-md w-fit font-medium text-emerald-600 dark:text-emerald-400 text-xs">
-                ↗ +$450 this month
+                <TrendingUp className="w-3 h-3" /> +$450 this month
+              </div>
+            </motion.div>
+
+            {/* Floating UI Element 2: Transactions Mock */}
+            <motion.div 
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.7, delay: 0.8 }}
+              className="hidden md:block top-10 right-[10%] lg:right-[5%] z-20 absolute bg-white dark:bg-stone-950 shadow-2xl p-4 border border-stone-200 dark:border-stone-800 rounded-xl w-64"
+            >
+              <div className="mb-3 font-semibold text-stone-900 dark:text-stone-50 text-sm">Recent Transactions</div>
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-2">
+                    <div className="flex justify-center items-center bg-orange-100 dark:bg-orange-900/30 rounded-full w-8 h-8 text-orange-600 dark:text-orange-400">
+                      <Coffee className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <div className="font-medium text-stone-900 dark:text-stone-50 text-xs">Coffee Shop</div>
+                      <div className="text-[10px] text-stone-500">Today</div>
+                    </div>
+                  </div>
+                  <div className="font-semibold text-stone-900 dark:text-stone-50 text-sm">-$4.50</div>
+                </div>
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-2">
+                    <div className="flex justify-center items-center bg-blue-100 dark:bg-blue-900/30 rounded-full w-8 h-8 text-blue-600 dark:text-blue-400">
+                      <ShoppingBag className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <div className="font-medium text-stone-900 dark:text-stone-50 text-xs">Groceries</div>
+                      <div className="text-[10px] text-stone-500">Yesterday</div>
+                    </div>
+                  </div>
+                  <div className="font-semibold text-stone-900 dark:text-stone-50 text-sm">-$120.00</div>
+                </div>
               </div>
             </motion.div>
           </div>

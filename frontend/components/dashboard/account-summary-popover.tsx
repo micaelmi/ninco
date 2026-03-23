@@ -9,7 +9,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Wallet, Info, Pencil, PlusCircle } from 'lucide-react';
+import { Wallet, Info, Pencil, PlusCircle, EyeOff } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 import { IconRenderer } from '@/components/ui/icon-renderer';
 import { AccountForm } from '@/components/forms/account-form';
@@ -22,6 +22,7 @@ interface AccountSummary {
   color: string;
   icon?: string;
   currencyCode?: string | null;
+  isVisible: boolean;
 }
 
 interface AccountSummaryPopoverProps {
@@ -129,10 +130,14 @@ export function AccountSummaryPopover({ accounts, trigger }: AccountSummaryPopov
                   <div className="flex items-center gap-2">
                     <span className={cn(
                       "font-mono font-bold text-sm",
-                      account.balance >= 0 ? "text-emerald-600" : "text-red-500"
+                      account.balance >= 0 ? "text-emerald-600" : "text-red-500",
+                      account.isVisible === false && "opacity-60"
                     )}>
                       {formatCurrency(account.balance, account.currencyCode)}
                     </span>
+                    {account.isVisible === false && (
+                      <EyeOff className="w-3.5 h-3.5 text-muted-foreground" aria-label="Hidden from dashboard" />
+                    )}
                     <Button
                       variant="ghost"
                       size="icon"

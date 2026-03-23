@@ -17,6 +17,7 @@ export async function listAccounts(app: FastifyInstance) {
           icon: z.string(),
           userId: z.string(),
           currencyCode: z.string().nullable(),
+          isVisible: z.boolean(),
           currency: z.object({
             symbol: z.string(),
             decimalPlaces: z.number(),

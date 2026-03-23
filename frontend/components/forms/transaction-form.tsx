@@ -68,6 +68,7 @@ import { useAccounts } from '@/lib/hooks/use-accounts';
 import { useCategories } from '@/lib/hooks/use-categories';
 import { useTags, useCreateTag } from '@/lib/hooks/use-tags';
 import { useCreateTransaction, useUpdateTransaction } from '@/lib/hooks/use-transactions';
+import { useUser } from '@/lib/hooks/use-user';
 import { Check, Plus } from 'lucide-react';
 import {
   transactionFormSchema,
@@ -97,6 +98,7 @@ export function TransactionForm({ type: propsType, initialData, transactionId, o
   const { data: accounts, isLoading: accountsLoading } = useAccounts();
   const { data: categories, isLoading: categoriesLoading } = useCategories();
   const { data: tags, isLoading: tagsLoading } = useTags();
+  const { data: userPref } = useUser();
   const createTagMutation = useCreateTag();
   const createTransaction = useCreateTransaction();
   const updateTransaction = useUpdateTransaction();
@@ -131,6 +133,13 @@ export function TransactionForm({ type: propsType, initialData, transactionId, o
       });
     }
   }, [initialData, form]);
+
+  // Set default account id if userPref arrives and we are not in edit mode
+  useEffect(() => {
+    if (!isEditMode && userPref?.defaultAccountId && !form.getValues('accountId')) {
+      form.setValue('accountId', userPref.defaultAccountId);
+    }
+  }, [userPref?.defaultAccountId, isEditMode, form]);
 
   const handleCreateTag = async (name: string) => {
     try {

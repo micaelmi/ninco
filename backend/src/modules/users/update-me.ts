@@ -10,6 +10,8 @@ export async function updateMe(app: FastifyInstance) {
       summary: 'Update current user profile & preferences',
       body: z.object({
         preferredCurrencyCode: z.string().optional(),
+        defaultAccountId: z.string().nullable().optional(),
+        defaultPeriod: z.string().nullable().optional(),
       }),
       response: {
         200: z.object({
@@ -18,13 +20,15 @@ export async function updateMe(app: FastifyInstance) {
           name: z.string().nullable(),
           imageUrl: z.string().nullable(),
           preferredCurrencyCode: z.string().nullable(),
+          defaultAccountId: z.string().nullable(),
+          defaultPeriod: z.string().nullable(),
         }),
         404: z.object({ message: z.string() }),
       },
     },
   }, async (request, reply) => {
     const userId = request.userId;
-    const { preferredCurrencyCode } = request.body;
+    const { preferredCurrencyCode, defaultAccountId, defaultPeriod } = request.body;
 
     const user = await prisma.user.findUnique({
       where: { id: userId },
@@ -38,6 +42,8 @@ export async function updateMe(app: FastifyInstance) {
       where: { id: userId },
       data: {
         preferredCurrencyCode: preferredCurrencyCode !== undefined ? preferredCurrencyCode : user.preferredCurrencyCode,
+        defaultAccountId: defaultAccountId !== undefined ? defaultAccountId : user.defaultAccountId,
+        defaultPeriod: defaultPeriod !== undefined ? defaultPeriod : user.defaultPeriod,
       },
     });
 
@@ -47,6 +53,8 @@ export async function updateMe(app: FastifyInstance) {
       name: updatedUser.name,
       imageUrl: updatedUser.imageUrl,
       preferredCurrencyCode: updatedUser.preferredCurrencyCode,
+      defaultAccountId: updatedUser.defaultAccountId ?? null,
+      defaultPeriod: updatedUser.defaultPeriod ?? null,
     };
   });
 }
