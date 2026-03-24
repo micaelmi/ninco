@@ -6,7 +6,7 @@ import { PrismaPg } from '@prisma/adapter-pg';
 import { currencies } from './currencies';
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-const adapter = new PrismaPg(pool);
+const adapter = new PrismaPg(pool as any);
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
@@ -131,9 +131,16 @@ async function main() {
       { name: 'Subscriptions', color: '#1e293b', icon: 'CreditCard', type: TransactionType.EXPENSE },
     ];
 
-    const categories = await Promise.all(
-      categoriesData.map(cat => prisma.category.create({ data: { ...cat, userId } }))
-    );
+    const categories: any[] = [];
+    for (const cat of categoriesData) {
+      let existing = await prisma.category.findFirst({
+        where: { name: cat.name, type: cat.type, userId: null }
+      });
+      if (!existing) {
+        existing = await prisma.category.create({ data: { ...cat } });
+      }
+      categories.push(existing);
+    }
 
     console.log('Categories created');
 
