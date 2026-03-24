@@ -1,0 +1,124 @@
+# ──────────────────────────────────────────────────────────────────
+# Ninco — CI Workflow
+# Runs linting, typechecking, and tests on every PR and push to main.
+# ──────────────────────────────────────────────────────────────────
+
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+# Cancel in-progress CI runs for the same branch/PR
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  # ─── Lint & Typecheck ────────────────────────────────────────────
+  lint-and-typecheck:
+    name: Lint & Typecheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma client
+        run: pnpm --filter backend exec npx prisma generate
+
+      - name: Lint frontend
+        run: pnpm --filter frontend lint
+
+      - name: Typecheck backend (via build)
+        run: pnpm --filter backend build
+
+      - name: Typecheck frontend (via build)
+        run: pnpm --filter frontend build
+        env:
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: pk_test_placeholder
+          NEXT_PUBLIC_API_URL: http://localhost:3333
+
+  # ─── Backend Tests ───────────────────────────────────────────────
+  backend-tests:
+    name: Backend Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    services:
+      postgres:
+        image: postgres:14-alpine
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: ninco_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma client
+        run: pnpm --filter backend exec npx prisma generate
+
+      - name: Run backend tests
+        run: pnpm --filter backend test
+        env:
+          DATABASE_URL: postgresql://test:test@localhost:5432/ninco_test
+          CLERK_SECRET_KEY: test_fake_key
+          CLERK_WEBHOOK_SECRET: test_fake_webhook
+          NODE_ENV: test
+          FEEDBACK_EMAIL_TO: test@test.com
+          CORS_ORIGINS: http://localhost:3000
+
+  # ─── Frontend Tests ──────────────────────────────────────────────
+  frontend-tests:
+    name: Frontend Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run frontend tests
+        run: pnpm --filter frontend test

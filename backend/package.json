@@ -4,6 +4,8 @@
 		"dev": "tsx watch src/server.ts",
 		"build": "tsup src",
 		"start": "node dist/server.js",
+		"test": "vitest run",
+		"test:watch": "vitest",
 		"studio": "npx prisma studio",
 		"seed": "npx prisma db seed",
 		"seed:prod": "tsx prisma/seed-prod.ts",
@@ -49,6 +51,7 @@
 		"ts-node": "^10.9.2",
 		"tsup": "^8.5.1",
 		"tsx": "^4.21.0",
-		"typescript": "^5.9.3"
+		"typescript": "^5.9.3",
+		"vitest": "^4.1.1"
 	}
 }
