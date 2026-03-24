@@ -3,11 +3,11 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
   test: {
     env: {
-      DATABASE_URL: 'postgresql://docker:docker@127.0.0.1:5432/ninco_test',
-      CLERK_SECRET_KEY: 'test_fake_key',
-      CLERK_WEBHOOK_SECRET: 'test_fake_webhook',
+      DATABASE_URL: process.env.DATABASE_URL || 'postgresql://docker:docker@127.0.0.1:5432/ninco_test',
+      CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY || 'test_fake_key',
+      CLERK_WEBHOOK_SECRET: process.env.CLERK_WEBHOOK_SECRET || 'test_fake_webhook',
       NODE_ENV: 'test',
-      FEEDBACK_EMAIL_TO: 'test@test.com',
+      FEEDBACK_EMAIL_TO: process.env.FEEDBACK_EMAIL_TO || 'test@test.com',
     },
     environment: 'node',
     globals: true,
