@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -12,6 +13,24 @@ interface OverviewChartProps {
 }
 
 export function OverviewChart({ data }: OverviewChartProps) {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  const getInterval = () => {
+    const baseInterval = data.length > 12 ? 4 : 1;
+    return isMobile ? (baseInterval + 1) * 2 - 1 : baseInterval;
+  };
+  
+  const interval = getInterval();
+
   return (
     <Tabs defaultValue="income" className="flex flex-col w-full h-full">
       <div className="flex justify-center mb-4">
@@ -28,6 +47,7 @@ export function OverviewChart({ data }: OverviewChartProps) {
               tick={{ fill: 'var(--muted-foreground)', fontSize: 12 }}
               tickLine={false}
               axisLine={false}
+              interval={interval}
             />
             <YAxis
               tick={{ fill: 'var(--muted-foreground)', fontSize: 12 }}
@@ -57,6 +77,7 @@ export function OverviewChart({ data }: OverviewChartProps) {
               tick={{ fill: 'var(--muted-foreground)', fontSize: 12 }}
               tickLine={false}
               axisLine={false}
+              interval={interval}
             />
             <YAxis
               tick={{ fill: 'var(--muted-foreground)', fontSize: 12 }}

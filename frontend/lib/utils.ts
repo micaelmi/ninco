@@ -11,6 +11,7 @@ const formattersCache = new Map<string, Intl.NumberFormat>();
  * Format a number as a currency string (e.g., "$1,234.56").
  * Optionally provide a currency code and decimal places to override defaults.
  */
+
 export function formatCurrency(
   value: number,
   currencyCode?: string | null,
@@ -39,4 +40,12 @@ export function formatCurrency(
   }
 
   return formattersCache.get(cacheKey)!.format(value);
+}
+
+/**
+ * Format a date automatically depending on the user's location.
+ */
+export function formatDate(date: string | Date): string {
+  const locale = typeof window !== 'undefined' ? window.navigator.language : 'en-US';
+  return new Intl.DateTimeFormat(locale).format(new Date(date));
 }

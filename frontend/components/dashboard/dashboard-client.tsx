@@ -26,8 +26,7 @@ import { useTransactions, useDashboardSummary } from "@/lib/hooks/use-transactio
 import { useDateRange } from "@/lib/hooks/use-date-range";
 import { useUser } from "@/lib/hooks/use-user";
 import { useExchangeRates, convertCurrency } from "@/lib/hooks/use-exchange-rates";
-import { cn } from "@/lib/utils";
-import { formatCurrency } from "@/lib/utils";
+import { cn, formatCurrency, formatDate } from "@/lib/utils";
 import Image from 'next/image';
 import { title } from 'process';
 
@@ -252,7 +251,7 @@ export function DashboardClient({ userName }: { userName: string }) {
                               {transaction.category?.name || 'Uncategorized'}
                             </span>
                             <span className="font-mono text-[10px] text-muted-foreground/60 uppercase shrink-0">
-                              {new Date(transaction.date).toLocaleDateString()}
+                              {formatDate(transaction.date)}
                             </span>
                           </div>
                         </div>

@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 
 // Landing Page Sections
 import { HeroSection } from "@/components/landing/hero-section";
+import { DashboardPreviewSection } from "@/components/landing/dashboard-preview-section";
 import { FeaturesSection } from "@/components/landing/features-section";
 import { HowItWorksSection } from "@/components/landing/how-it-works-section";
 import { FAQSection } from "@/components/landing/faq-section";
@@ -24,6 +25,7 @@ export default async function Home() {
       <main className="flex flex-col flex-1 w-full">
         {/* Sections are ordered for maximum conversion and SEO flow */}
         <HeroSection />
+        <DashboardPreviewSection />
         <PainSection />
         <FeaturesSection />
         <HowItWorksSection />

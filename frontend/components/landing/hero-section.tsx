@@ -13,21 +13,21 @@ export function HeroSection() {
       {/* Logo */}
       <div className="top-6 md:top-8 left-6 md:left-8 z-50 absolute">
         <Link href="/" className="flex items-center gap-2">
-            <Image
-                src="/icon.png"
-                alt="Ninco Icon"
-                width={32}
-                height={32}
-                priority
-            />
-            <span className="bg-clip-text bg-linear-to-r from-emerald-500 dark:from-emerald-400 to-teal-600 dark:to-teal-500 font-extrabold text-transparent text-xl tracking-tight">
-                Ninco
-            </span>
+          <Image
+            src="/icon.png"
+            alt="Ninco Icon"
+            width={32}
+            height={32}
+            priority
+          />
+          <span className="bg-clip-text bg-linear-to-r from-emerald-500 dark:from-emerald-400 to-teal-600 dark:to-teal-500 font-extrabold text-transparent text-xl tracking-tight">
+            Ninco
+          </span>
         </Link>
       </div>
       {/* Background decoration */}
       <div className="top-0 left-1/2 -z-10 absolute bg-emerald-500/20 dark:bg-emerald-500/10 blur-[120px] rounded-full w-[800px] h-[400px] -translate-x-1/2 pointer-events-none" />
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
@@ -43,7 +43,7 @@ export function HeroSection() {
             where your money went.
           </span>
         </h1>
-        
+
         <p className="mb-10 max-w-2xl font-medium text-stone-600 dark:text-stone-400 text-lg sm:text-xl">
           Track your spending, stay on budget, and finally feel in control — without the spreadsheet headaches or bloated finance apps. Setup takes 2 minutes.
         </p>
@@ -64,85 +64,14 @@ export function HeroSection() {
         </div>
 
         {/* Social Proof */}
-        <div className="flex flex-col items-center gap-2 mb-16">
+        <div className="flex flex-col items-center gap-2">
           <div className="flex gap-1 text-yellow-400">
             {[1, 2, 3, 4, 5].map((i) => (
-              <Star key={i} className="w-5 h-5 fill-current" />
+              <Star key={i} className="fill-current w-5 h-5" />
             ))}
           </div>
-          <p className="text-stone-600 dark:text-stone-400 font-medium text-sm">"Finally a finance app I actually use daily."</p>
+          <p className="font-medium text-stone-600 dark:text-stone-400 text-sm">"Finally a finance app I actually use daily."</p>
         </div>
-
-        <motion.div 
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.2 }}
-          className="relative flex justify-center items-center mx-auto w-full max-w-3xl"
-        >
-          <div className="relative flex justify-center items-center mt-8 sm:mt-12 w-full">
-            {/* Subtle glow behind mascot */}
-            <div className="absolute bg-emerald-500/20 dark:bg-emerald-500/10 blur-[80px] rounded-full w-[300px] sm:w-[500px] h-[300px] sm:h-[500px] pointer-events-none" />
-            
-            <Image
-              src="/mascot.png"
-              alt="Ninco Mascot"
-              width={400}
-              height={400}
-              className="z-10 relative opacity-100 drop-shadow-2xl w-[60%] md:w-[40%] object-contain"
-              priority
-            />
-
-            {/* Floating UI Element 1: Total Balance */}
-            <motion.div 
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.7, delay: 0.6 }}
-              className="hidden md:block bottom-10 left-[10%] lg:left-[5%] z-20 absolute bg-white dark:bg-stone-950 shadow-2xl p-5 border border-stone-200 dark:border-stone-800 rounded-xl"
-            >
-              <div className="mb-1 font-medium text-stone-500 dark:text-stone-400 text-sm">Total Balance</div>
-              <div className="font-extrabold text-stone-900 dark:text-stone-50 text-3xl">$12,450.00</div>
-              <div className="flex items-center gap-1 bg-emerald-50 dark:bg-emerald-900/30 mt-2 px-2 py-1 rounded-md w-fit font-medium text-emerald-600 dark:text-emerald-400 text-xs">
-                <TrendingUp className="w-3 h-3" /> +$450 this month
-              </div>
-            </motion.div>
-
-            {/* Floating UI Element 2: Transactions Mock */}
-            <motion.div 
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.7, delay: 0.8 }}
-              className="hidden md:block top-10 right-[10%] lg:right-[5%] z-20 absolute bg-white dark:bg-stone-950 shadow-2xl p-4 border border-stone-200 dark:border-stone-800 rounded-xl w-64"
-            >
-              <div className="mb-3 font-semibold text-stone-900 dark:text-stone-50 text-sm">Recent Transactions</div>
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-2">
-                    <div className="flex justify-center items-center bg-orange-100 dark:bg-orange-900/30 rounded-full w-8 h-8 text-orange-600 dark:text-orange-400">
-                      <Coffee className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <div className="font-medium text-stone-900 dark:text-stone-50 text-xs">Coffee Shop</div>
-                      <div className="text-[10px] text-stone-500">Today</div>
-                    </div>
-                  </div>
-                  <div className="font-semibold text-stone-900 dark:text-stone-50 text-sm">-$4.50</div>
-                </div>
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-2">
-                    <div className="flex justify-center items-center bg-blue-100 dark:bg-blue-900/30 rounded-full w-8 h-8 text-blue-600 dark:text-blue-400">
-                      <ShoppingBag className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <div className="font-medium text-stone-900 dark:text-stone-50 text-xs">Groceries</div>
-                      <div className="text-[10px] text-stone-500">Yesterday</div>
-                    </div>
-                  </div>
-                  <div className="font-semibold text-stone-900 dark:text-stone-50 text-sm">-$120.00</div>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        </motion.div>
       </motion.div>
     </section>
   );
