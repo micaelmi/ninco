@@ -12,6 +12,7 @@ interface ClerkUserEventData {
   first_name: string | null;
   last_name: string | null;
   image_url: string | null;
+  public_metadata?: { role?: string };
 }
 
 interface ClerkSubscriptionEventData {
@@ -77,7 +78,7 @@ export async function clerkSync(app: FastifyInstance) {
     // ── User events ──────────────────────────────────────────────────
     if (eventType === 'user.created' || eventType === 'user.updated') {
       const data = evt.data as ClerkUserEventData;
-      const { id } = data;
+      const { id, public_metadata } = data;
 
       const { 
         email_addresses, 
@@ -97,9 +98,18 @@ export async function clerkSync(app: FastifyInstance) {
 
       const fullName = first_name && last_name ? `${first_name} ${last_name}` : (first_name || last_name || null);
 
+      const isMetadataPremium = public_metadata?.role === 'premium';
+
+      const targetTypeStr = isMetadataPremium ? 'premium' : 'normal';
+      const targetType = await prisma.userType.findUnique({
+        where: { type: targetTypeStr },
+      });
+
       const normalType = await prisma.userType.findUnique({
         where: { type: 'normal' },
       });
+
+      const initialLimit = isMetadataPremium ? AI_LIMITS.premium : AI_LIMITS.normal;
 
       await prisma.user.upsert({
         where: { id },
@@ -113,7 +123,7 @@ export async function clerkSync(app: FastifyInstance) {
           email: primaryEmail,
           name: fullName,
           imageUrl: image_url,
-          userTypeId: normalType?.id,
+          userTypeId: targetType?.id ?? normalType?.id,
           preferredCurrencyCode: 'USD',
           accounts: {
             create: {
@@ -126,13 +136,39 @@ export async function clerkSync(app: FastifyInstance) {
           },
           aiCredit: {
             create: {
-              remaining: AI_LIMITS.normal,
-              limit: AI_LIMITS.normal,
+              remaining: initialLimit,
+              limit: initialLimit,
               periodStart: new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), 1)),
             }
           }
         },
       });
+
+      // If this was an update, and they have premium metadata, we should ensure they are upgraded.
+      if (eventType === 'user.updated' && isMetadataPremium) {
+        const currentUser = await prisma.user.findUnique({ 
+          where: { id },
+          include: { userType: true, aiCredit: true }
+        });
+        
+        if (currentUser && currentUser.userType?.type !== 'premium') {
+          if (targetType) {
+            await prisma.user.update({
+              where: { id },
+              data: { userTypeId: targetType.id },
+            });
+            
+            const credit = currentUser.aiCredit;
+            if (credit) {
+              const newRemaining = credit.remaining + (AI_LIMITS.premium - credit.limit);
+              await prisma.aiCredit.update({
+                 where: { userId: id },
+                 data: { limit: AI_LIMITS.premium, remaining: Math.max(newRemaining, 0) }
+              });
+            }
+          }
+        }
+      }
     }
 
     if (eventType === 'user.deleted') {
