@@ -9,8 +9,8 @@ model Account {
   isVisible    Boolean       @default(true)
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
-  user            User          @relation("UserAccounts", fields: [userId], references: [id])
+  user            User          @relation("UserAccounts", fields: [userId], references: [id], onDelete: Cascade)
   defaultForUsers User[]        @relation("UserDefaultAccount")
-  currency     Currency?     @relation(fields: [currencyCode], references: [code])
+  currency        Currency?     @relation(fields: [currencyCode], references: [code])
   transactions Transaction[]
 }
