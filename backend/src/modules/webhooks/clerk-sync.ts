@@ -173,9 +173,13 @@ export async function clerkSync(app: FastifyInstance) {
 
     if (eventType === 'user.deleted') {
       const data = evt.data as ClerkUserEventData;
-      await prisma.user.delete({
-        where: { id: data.id },
-      });
+      try {
+        await prisma.user.delete({
+          where: { id: data.id },
+        });
+      } catch (error) {
+        request.log.info(`User ${data.id} might already be deleted or not found.`);
+      }
     }
 
     // ── Subscription events ──────────────────────────────────────────
@@ -205,7 +209,8 @@ export async function clerkSync(app: FastifyInstance) {
         });
 
         if (userTypeRecord && userId) {
-          await prisma.user.update({
+          // Use updateMany so it doesn't throw if the user is missing
+          await prisma.user.updateMany({
             where: { id: userId },
             data: { userTypeId: userTypeRecord.id },
           });
@@ -242,7 +247,7 @@ export async function clerkSync(app: FastifyInstance) {
       });
 
       if (normalType) {
-        await prisma.user.update({
+        await prisma.user.updateMany({
           where: { id: userId },
           data: { userTypeId: normalType.id },
         });
