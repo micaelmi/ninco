@@ -62,8 +62,6 @@ services:
       - ninco-backend
     networks:
       - ninco-network
-    environment:
-      - GEMINI_API_KEY=${GEMINI_API_KEY}
     env_file:
       - ./frontend/.env.local
 
