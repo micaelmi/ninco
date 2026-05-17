@@ -30,6 +30,13 @@ export async function createTransaction(app: FastifyInstance) {
     const userId = request.userId;
     const { amount, type, date, description, comments, categoryId, tagIds, accountId } = request.body;
 
+    const account = await prisma.account.findUnique({
+      where: { id: accountId, userId },
+    });
+    if (!account) {
+      return reply.status(404).send({ message: 'Account not found' } as any);
+    }
+
     const transaction = await prisma.$transaction(async (tx) => {
       const transaction = await tx.transaction.create({
         data: {

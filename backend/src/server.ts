@@ -1,5 +1,7 @@
 import fastify from 'fastify';
 import cors from '@fastify/cors';
+import helmet from '@fastify/helmet';
+import rateLimit from '@fastify/rate-limit';
 import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
 import { jsonSchemaTransform, serializerCompiler, validatorCompiler } from 'fastify-type-provider-zod';
@@ -14,25 +16,33 @@ export async function buildApp() {
   app.setValidatorCompiler(validatorCompiler);
   app.setSerializerCompiler(serializerCompiler);
 
+  app.register(helmet);
+  await app.register(rateLimit, {
+    max: 100,
+    timeWindow: '1 minute',
+  });
+
   app.register(cors, {
     origin: env.CORS_ORIGINS.split(','),
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   });
 
-  app.register(swagger, {
-    openapi: {
-      info: {
-        title: 'Ninco API',
-        description: 'API for Ninco application',
-        version: '1.1.0',
+  if (env.NODE_ENV !== 'production') {
+    app.register(swagger, {
+      openapi: {
+        info: {
+          title: 'Ninco API',
+          description: 'API for Ninco application',
+          version: '1.1.0',
+        },
       },
-    },
-    transform: jsonSchemaTransform,
-  });
+      transform: jsonSchemaTransform,
+    });
 
-  app.register(swaggerUi, {
-    routePrefix: '/docs',
-  });
+    app.register(swaggerUi, {
+      routePrefix: '/docs',
+    });
+  }
 
   // Global error handler — prevents raw error leaks to clients
   app.setErrorHandler((error: Error & { validation?: unknown }, request, reply) => {

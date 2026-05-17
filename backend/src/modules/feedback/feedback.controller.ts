@@ -6,6 +6,15 @@ import { FeedbackInput } from './feedback.schema';
 
 const clerkClient = createClerkClient({ secretKey: env.CLERK_SECRET_KEY });
 
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
 export async function sendFeedbackHandler(
   request: FastifyRequest<{ Body: FeedbackInput }>,
   reply: FastifyReply
@@ -24,10 +33,10 @@ export async function sendFeedbackHandler(
 
     const emailContent = `
       <h1>New Feedback Received</h1>
-      <p><strong>From:</strong> ${userName} (${userEmail})</p>
-      <p><strong>Subject:</strong> ${subject}</p>
+      <p><strong>From:</strong> ${escapeHtml(userName)} (${escapeHtml(userEmail)})</p>
+      <p><strong>Subject:</strong> ${escapeHtml(subject)}</p>
       <h2>Message:</h2>
-      <p>${message.replace(/\n/g, '<br>')}</p>
+      <p>${escapeHtml(message).replace(/\n/g, '<br>')}</p>
     `;
 
     await sendEmail(env.FEEDBACK_EMAIL_TO, `Feedback: ${subject}`, emailContent, userEmail);

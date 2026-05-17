@@ -189,7 +189,7 @@ export async function clerkSync(app: FastifyInstance) {
     ) {
       try {
         const data = evt.data as any;
-        require('fs').appendFileSync('C:\\tmp\\clerk_webhook.log', JSON.stringify({ type: eventType, data }) + '\n');
+        request.log.info({ type: eventType }, 'Subscription webhook received');
         
         // Find user_id inside payer object
         const userId = data.payer?.user_id || data.user_id || data.id;
@@ -233,7 +233,7 @@ export async function clerkSync(app: FastifyInstance) {
 
         request.log.info(`Subscription ${eventType}: user ${userId} → ${targetType} (limit: ${targetLimit})`);
       } catch (err: any) {
-        require('fs').appendFileSync('C:\\tmp\\clerk_webhook.log', 'ERROR: ' + err.stack + '\n');
+        request.log.error({ err }, 'Subscription webhook error');
         throw err;
       }
     }

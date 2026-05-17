@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { auth } from '@clerk/nextjs/server';
 import type { ReportData } from '@/lib/api/types';
 
 const REPORT_SYSTEM_PROMPT = `You are a personal finance advisor for the Ninco app.
@@ -25,6 +26,11 @@ Return this JSON shape:
 
 export async function POST(request: NextRequest) {
   try {
+    const { userId } = await auth();
+    if (!userId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
       return NextResponse.json(
