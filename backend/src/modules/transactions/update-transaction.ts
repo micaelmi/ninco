@@ -13,7 +13,7 @@ export async function updateTransaction(app: FastifyInstance) {
       }),
       body: z.object({
         amount: z.number().optional(),
-        type: z.enum(['INCOME', 'EXPENSE']).optional(),
+        type: z.enum(['INCOME', 'EXPENSE', 'TRANSFER']).optional(),
         date: z.string().datetime().optional(),
         description: z.string().optional(),
         accountId: z.uuid().optional(),
@@ -25,7 +25,7 @@ export async function updateTransaction(app: FastifyInstance) {
         200: z.object({
           id: z.uuid(),
           amount: z.string(),
-          type: z.enum(['INCOME', 'EXPENSE']),
+          type: z.enum(['INCOME', 'EXPENSE', 'TRANSFER']),
           date: z.coerce.date(),
           description: z.string().nullable(),
           comments: z.string().nullable(),

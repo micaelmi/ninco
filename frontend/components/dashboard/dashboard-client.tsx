@@ -229,7 +229,13 @@ export function DashboardClient({ userName }: { userName: string }) {
                 className="flex flex-col gap-2"
               >
                 {transactions?.data && transactions.data.length > 0 ? (
-                  transactions.data.map((transaction) => (
+                  transactions.data.map((transaction) => {
+                    const isTransferOut = transaction.type === 'TRANSFER' && (
+                      transaction.description?.startsWith('Transfer to ') ||
+                      transaction.description?.includes('— Transfer to ')
+                    );
+                    const isTransferIn = transaction.type === 'TRANSFER' && !isTransferOut;
+                    return (
                     <MotionDiv 
                       key={transaction.id} 
                       className="group flex justify-between items-center bg-card hover:bg-muted/50 shadow-sm p-3 border rounded-xl text-card-foreground transition-colors" 
@@ -238,9 +244,9 @@ export function DashboardClient({ userName }: { userName: string }) {
                       <div className="flex items-center gap-3 overflow-hidden">
                         <div
                           className="flex justify-center items-center rounded-full w-10 h-10 text-white shrink-0"
-                          style={{ backgroundColor: transaction.category?.color || '#94a3b8' }}
+                          style={{ backgroundColor: transaction.type === 'TRANSFER' ? '#3b82f6' : (transaction.category?.color || '#94a3b8') }}
                         >
-                          <IconRenderer name={transaction.category?.icon || 'HelpCircle'} className="w-5 h-5" />
+                          <IconRenderer name={transaction.type === 'TRANSFER' ? 'ArrowLeftRight' : (transaction.category?.icon || 'HelpCircle')} className="w-5 h-5" />
                         </div>
                         <div className="flex flex-col overflow-hidden">
                           <span className="font-medium group-hover:text-primary text-sm truncate transition-colors">
@@ -248,7 +254,7 @@ export function DashboardClient({ userName }: { userName: string }) {
                           </span>
                           <div className="flex items-center gap-1.5 mt-0.5">
                             <span className="bg-muted px-1.5 py-0.5 rounded font-medium text-[10px] text-muted-foreground truncate">
-                              {transaction.category?.name || 'Uncategorized'}
+                              {transaction.type === 'TRANSFER' ? 'Transfer' : (transaction.category?.name || 'Uncategorized')}
                             </span>
                             <span className="font-mono text-[10px] text-muted-foreground/60 uppercase shrink-0">
                               {formatDate(transaction.date)}
@@ -258,13 +264,14 @@ export function DashboardClient({ userName }: { userName: string }) {
                       </div>
                       <div className={cn(
                         "ml-2 font-mono font-bold text-right shrink-0",
-                        transaction.type === 'INCOME' ? 'text-primary' : 'text-destructive'
+                        transaction.type === 'INCOME' ? 'text-primary' : 
+                        transaction.type === 'TRANSFER' ? 'text-blue-600' : 'text-destructive'
                       )}>
-                        {transaction.type === 'INCOME' ? '+' : '-'}
+                        {transaction.type === 'INCOME' || isTransferIn ? '+' : '-'}
                         {formatCurrency(parseFloat(transaction.amount), prefCode)}
                       </div>
                     </MotionDiv>
-                  ))
+                  );})
                 ) : (
                   <div className="bg-card py-12 border rounded-xl text-muted-foreground text-sm text-center italic">
                     No transactions found for this period.

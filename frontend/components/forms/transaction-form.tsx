@@ -326,7 +326,7 @@ export function TransactionForm({ type: propsType, initialData, transactionId, o
                     <DialogTitle>Create New Category</DialogTitle>
                   </DialogHeader>
                   <CategoryForm 
-                    type={type} 
+                    type={type === 'TRANSFER' ? 'EXPENSE' : type} 
                     onSuccess={onCategoryCreated}
                     onCancel={() => setIsCategoryDialogOpen(false)} 
                   />

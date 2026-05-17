@@ -10,7 +10,7 @@ export async function createTransaction(app: FastifyInstance) {
       summary: 'Create a new transaction',
       body: z.object({
         amount: z.number(),
-        type: z.enum(['INCOME', 'EXPENSE']),
+        type: z.enum(['INCOME', 'EXPENSE', 'TRANSFER']),
         date: z.string().datetime(),
         description: z.string().optional(),
         accountId: z.uuid(),

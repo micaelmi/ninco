@@ -2,6 +2,7 @@ import { apiClient } from './client';
 import type {
   Transaction,
   CreateTransactionInput,
+  CreateTransferInput,
   UpdateTransactionInput,
   DashboardSummary,
   GetTransactionsParams,
@@ -26,6 +27,13 @@ export async function createTransaction(
   data: CreateTransactionInput
 ): Promise<{ id: string; amount: string; accountId: string }> {
   const response = await apiClient.post('/transactions', data);
+  return response.data;
+}
+
+export async function createTransfer(
+  data: CreateTransferInput
+): Promise<{ sourceTransactionId: string; destinationTransactionId: string }> {
+  const response = await apiClient.post('/transactions/transfer', data);
   return response.data;
 }
 

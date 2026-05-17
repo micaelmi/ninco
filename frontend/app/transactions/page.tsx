@@ -55,7 +55,7 @@ export default function TransactionsPage() {
 
   // Pagination & type filter
   const [pagination, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize: 10 });
-  const [typeFilter, setTypeFilter] = useState<'ALL' | 'INCOME' | 'EXPENSE'>('ALL');
+  const [typeFilter, setTypeFilter] = useState<'ALL' | 'INCOME' | 'EXPENSE' | 'TRANSFER'>('ALL');
 
   // Dialog state
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
@@ -281,7 +281,7 @@ export default function TransactionsPage() {
               <div className="flex items-center gap-4 bg-muted/50 p-1.5 border rounded-lg w-full md:w-auto">
                 <RadioGroup
                   value={typeFilter}
-                  onValueChange={(val: 'ALL' | 'INCOME' | 'EXPENSE') => {
+                  onValueChange={(val: 'ALL' | 'INCOME' | 'EXPENSE' | 'TRANSFER') => {
                     setTypeFilter(val);
                     setPagination(prev => ({ ...prev, pageIndex: 0 }));
                   }}
@@ -291,6 +291,7 @@ export default function TransactionsPage() {
                     { value: 'ALL', label: 'All', activeClass: 'text-primary' },
                     { value: 'INCOME', label: 'Income', activeClass: 'text-emerald-600' },
                     { value: 'EXPENSE', label: 'Expense', activeClass: 'text-red-600' },
+                    { value: 'TRANSFER', label: 'Transfer', activeClass: 'text-blue-600' },
                   ] as const).map(({ value, label, activeClass }) => (
                     <div key={value} className="flex-1">
                       <RadioGroupItem value={value} id={value.toLowerCase()} className="sr-only" />

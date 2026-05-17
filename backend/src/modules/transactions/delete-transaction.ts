@@ -30,7 +30,16 @@ export async function deleteTransaction(app: FastifyInstance) {
       }
 
       // Revert account balance
-      const balanceChange = transaction.type === 'INCOME' ? -transaction.amount.toNumber() : transaction.amount.toNumber();
+      let balanceChange: number;
+      if (transaction.type === 'TRANSFER') {
+        // "Transfer to X" = outgoing (was decremented), revert by adding back
+        // "Transfer from X" = incoming (was incremented), revert by subtracting
+        const isOutgoing = transaction.description?.startsWith('Transfer to ') || 
+                           transaction.description?.includes('— Transfer to ');
+        balanceChange = isOutgoing ? transaction.amount.toNumber() : -transaction.amount.toNumber();
+      } else {
+        balanceChange = transaction.type === 'INCOME' ? -transaction.amount.toNumber() : transaction.amount.toNumber();
+      }
       await tx.account.update({
         where: { id: transaction.accountId },
         data: {

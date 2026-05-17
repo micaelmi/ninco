@@ -87,6 +87,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        suppressHydrationWarning
       ><ClerkProvider
         signInForceRedirectUrl="/home"
         signUpForceRedirectUrl="/home"

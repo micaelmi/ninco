@@ -48,12 +48,18 @@ export function useTransactionColumns({ onEdit, onDelete }: UseTransactionColumn
       cell: ({ row }: { row: Row<Transaction> }) => {
         const amount = parseFloat(row.getValue("amount"));
         const type = row.original.type;
+        const isTransferOut = type === 'TRANSFER' && (
+          row.original.description?.startsWith('Transfer to ') ||
+          row.original.description?.includes('— Transfer to ')
+        );
+        const isTransferIn = type === 'TRANSFER' && !isTransferOut;
         return (
           <div className={cn(
             "pl-4 font-mono font-bold text-base whitespace-nowrap",
-            type === 'INCOME' ? "text-emerald-600" : "text-red-600"
+            type === 'INCOME' ? "text-emerald-600" : 
+            type === 'TRANSFER' ? "text-blue-600" : "text-red-600"
           )}>
-            {type === 'INCOME' ? '+' : '-'}{formatCurrency(amount, prefCode)}
+            {type === 'INCOME' || isTransferIn ? '+' : '-'}{formatCurrency(amount, prefCode)}
           </div>
         );
       },

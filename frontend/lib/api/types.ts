@@ -4,7 +4,7 @@ export interface Transaction {
   userId: string;
   accountId: string;
   amount: string;
-  type: 'INCOME' | 'EXPENSE';
+  type: 'INCOME' | 'EXPENSE' | 'TRANSFER';
   date: Date;
   description: string | null;
   comments: string | null;
@@ -29,7 +29,7 @@ export interface Transaction {
 
 export interface CreateTransactionInput {
   amount: number;
-  type: 'INCOME' | 'EXPENSE';
+  type: 'INCOME' | 'EXPENSE' | 'TRANSFER';
   date: string; // ISO datetime string
   description?: string;
   accountId: string;
@@ -40,7 +40,7 @@ export interface CreateTransactionInput {
 
 export interface UpdateTransactionInput {
   amount?: number;
-  type?: 'INCOME' | 'EXPENSE';
+  type?: 'INCOME' | 'EXPENSE' | 'TRANSFER';
   date?: string;
   description?: string;
   accountId?: string;
@@ -107,6 +107,17 @@ export interface UpdateCategoryInput {
   icon?: string;
 }
 
+// Transfer Types
+export interface CreateTransferInput {
+  fromAccountId: string;
+  toAccountId: string;
+  amountFrom: number;
+  amountTo: number;
+  date: string; // ISO datetime string
+  description?: string;
+  comments?: string;
+}
+
 // Tag Types
 // Tag Types
 export interface Tag {
@@ -131,7 +142,7 @@ export interface GetTransactionsParams {
   to?: string;
   page?: number;
   limit?: number;
-  type?: 'INCOME' | 'EXPENSE';
+  type?: 'INCOME' | 'EXPENSE' | 'TRANSFER';
 }
 
 export interface GetTransactionsResponse {

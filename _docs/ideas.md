@@ -46,3 +46,15 @@ NEW FEATURE: message ai to create transaction
 - the report should be displayed in a way that is easy to understand, with charts and graphs.
 - there should be an option to download the report as a pdf or image.
 - the report should be generated using a cheap AI model, like Gemini Flash.
+
+NEW FEATURE: Transfer money between accounts
+- in the accounts modal, there should be a "Transfer" button
+- clicking this button should open a modal with the following fields:
+ - from: select account
+ - to: select account
+ - amount: input
+- this transaction is not an expense nor an income, it should be a new type of transaction called "Transfer"
+- the transfer transaction should be displayed in the transaction list as a transfer
+- an exemple: transfer 1000$ from "Main Account" to "Savings Account" should subtract 1000$ from "Main Account" and add 1000$ to "Savings Account".
+- if the account has a different currency, the user should input the amount that left the account and the amount that arrived in the other account. Ex: sending 1000$ from "Main Account" (USD) to "Savings Account" (EUR). the user should input 1000$ and the amount in EUR that arrived in the "Savings Account".
+- this feature does not require a database update

@@ -9,11 +9,12 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Wallet, Info, Pencil, PlusCircle, EyeOff } from 'lucide-react';
+import { Wallet, Info, Pencil, PlusCircle, EyeOff, ArrowLeftRight } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 import { IconRenderer } from '@/components/ui/icon-renderer';
 import { AccountForm } from '@/components/forms/account-form';
 import { cn } from '@/lib/utils';
+import { TransferForm } from '@/components/forms/transfer-form';
 
 interface AccountSummary {
   id: string;
@@ -32,7 +33,7 @@ interface AccountSummaryPopoverProps {
 
 export function AccountSummaryPopover({ accounts, trigger }: AccountSummaryPopoverProps) {
   const [open, setOpen] = useState(false);
-  const [view, setView] = useState<'list' | 'edit' | 'create'>('list');
+  const [view, setView] = useState<'list' | 'edit' | 'create' | 'transfer'>('list');
   const [editingAccountId, setEditingAccountId] = useState<string | null>(null);
 
   const editingAccount = accounts.find((a) => a.id === editingAccountId);
@@ -100,6 +101,19 @@ export function AccountSummaryPopover({ accounts, trigger }: AccountSummaryPopov
               onCancel={resetView}
             />
           </>
+        ) : view === 'transfer' ? (
+          <>
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <ArrowLeftRight className="w-4 h-4" />
+                Transfer Between Accounts
+              </DialogTitle>
+            </DialogHeader>
+            <TransferForm
+              onSuccess={resetView}
+              onCancel={resetView}
+            />
+          </>
         ) : (
           <>
             <DialogHeader>
@@ -158,13 +172,23 @@ export function AccountSummaryPopover({ accounts, trigger }: AccountSummaryPopov
                 </p>
               )}
               
-              <Button 
-                className="mt-4 w-full" 
-                variant="outline" 
-                onClick={() => setView('create')}
-              >
-                + Add New Account
-              </Button>
+              <div className="flex gap-2 mt-4">
+                <Button 
+                  className="flex-1" 
+                  variant="outline" 
+                  onClick={() => setView('transfer')}
+                >
+                  <ArrowLeftRight className="mr-2 w-4 h-4" />
+                  Transfer
+                </Button>
+                <Button 
+                  className="flex-1" 
+                  variant="outline" 
+                  onClick={() => setView('create')}
+                >
+                  + Add Account
+                </Button>
+              </div>
             </div>
           </>
         )}

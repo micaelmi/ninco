@@ -39,7 +39,13 @@ export function TransactionDetailDialog({
         <DialogHeader>
           <DialogTitle>Transaction Details</DialogTitle>
         </DialogHeader>
-        {transaction && (
+        {transaction && (() => {
+          const isTransferOut = transaction.type === 'TRANSFER' && (
+            transaction.description?.startsWith('Transfer to ') ||
+            transaction.description?.includes('— Transfer to ')
+          );
+          const isTransferIn = transaction.type === 'TRANSFER' && !isTransferOut;
+          return (
           <div className="space-y-4">
             <div className="flex justify-between items-start">
               <div>
@@ -50,23 +56,35 @@ export function TransactionDetailDialog({
               </div>
               <div className={cn(
                 "font-mono font-bold text-xl",
-                transaction.type === 'INCOME' ? "text-emerald-600" : "text-red-600"
+                transaction.type === 'INCOME' ? "text-emerald-600" :
+                transaction.type === 'TRANSFER' ? "text-blue-600" : "text-red-600"
               )}>
-                {transaction.type === 'INCOME' ? '+' : '-'}
+                {transaction.type === 'INCOME' || isTransferIn ? '+' : '-'}
                 {formatCurrency(parseFloat(transaction.amount), prefCode)}
               </div>
             </div>
 
             <div className="gap-2 grid grid-cols-2">
               <div className="space-y-1">
-                <span className="text-muted-foreground text-xs uppercase">Category</span>
-                <div className="flex items-center gap-2">
-                  <div
-                    className="rounded-full w-3 h-3"
-                    style={{ backgroundColor: transaction.category?.color || '#94a3b8' }}
-                  />
-                  <span>{transaction.category?.name || 'Uncategorized'}</span>
-                </div>
+                <span className="text-muted-foreground text-xs uppercase">
+                  {transaction.type === 'TRANSFER' ? 'Type' : 'Category'}
+                </span>
+                {transaction.type === 'TRANSFER' ? (
+                  <div className="flex items-center gap-2">
+                    <div className="bg-blue-100 dark:bg-blue-900/30 rounded-full w-3 h-3 flex items-center justify-center">
+                      <div className="bg-blue-600 rounded-full w-2 h-2" />
+                    </div>
+                    <span>Transfer</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <div
+                      className="rounded-full w-3 h-3"
+                      style={{ backgroundColor: transaction.category?.color || '#94a3b8' }}
+                    />
+                    <span>{transaction.category?.name || 'Uncategorized'}</span>
+                  </div>
+                )}
               </div>
               <div className="space-y-1">
                 <span className="text-muted-foreground text-xs uppercase">Account</span>
@@ -95,22 +113,25 @@ export function TransactionDetailDialog({
               </div>
             )}
 
-            <div className="flex justify-end gap-2 pt-4">
-              <Button variant="outline" size="sm" onClick={() => {
-                onOpenChange(false);
-                onEdit(transaction);
-              }}>
-                <Edit className="mr-2 w-3 h-3" /> Edit
-              </Button>
-              <Button variant="destructive" size="sm" onClick={() => {
-                onOpenChange(false);
-                onDelete(transaction.id);
-              }}>
-                <Trash className="mr-2 w-3 h-3" /> Delete
-              </Button>
-            </div>
+            {transaction.type !== 'TRANSFER' && (
+              <div className="flex justify-end gap-2 pt-4">
+                <Button variant="outline" size="sm" onClick={() => {
+                  onOpenChange(false);
+                  onEdit(transaction);
+                }}>
+                  <Edit className="mr-2 w-3 h-3" /> Edit
+                </Button>
+                <Button variant="destructive" size="sm" onClick={() => {
+                  onOpenChange(false);
+                  onDelete(transaction.id);
+                }}>
+                  <Trash className="mr-2 w-3 h-3" /> Delete
+                </Button>
+              </div>
+            )}
           </div>
-        )}
+          );
+        })()}
       </DialogContent>
     </Dialog>
   );

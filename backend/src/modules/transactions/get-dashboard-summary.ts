@@ -87,6 +87,9 @@ export async function getDashboardSummary(app: FastifyInstance) {
     const expenseCategories: Record<string, { id: string; name: string; value: number; color: string }> = {};
 
     transactions.forEach(t => {
+      // Skip transfers – they are internal account movements, not income or expense
+      if (t.type === 'TRANSFER') return;
+
       const amount = t.amount.toNumber();
       const categoryId = t.categoryId || 'uncategorized';
       const categoryName = t.category?.name || 'Uncategorized';

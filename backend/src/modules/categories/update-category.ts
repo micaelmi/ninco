@@ -15,7 +15,7 @@ export async function updateCategory(app: FastifyInstance) {
         name: z.string().optional(),
         color: z.string().optional(),
         icon: z.string().optional(),
-        type: z.enum(['INCOME', 'EXPENSE']).optional(),
+        type: z.enum(['INCOME', 'EXPENSE', 'TRANSFER']).optional(),
       }),
       response: {
         200: z.object({
@@ -23,7 +23,7 @@ export async function updateCategory(app: FastifyInstance) {
           name: z.string(),
           color: z.string().nullable(),
           icon: z.string().nullable(),
-          type: z.enum(['INCOME', 'EXPENSE']),
+          type: z.enum(['INCOME', 'EXPENSE', 'TRANSFER']),
           userId: z.string().nullable(),
           createdAt: z.date(),
         }),

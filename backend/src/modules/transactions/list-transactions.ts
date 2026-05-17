@@ -13,7 +13,7 @@ export async function listTransactions(app: FastifyInstance) {
         to: z.coerce.date().optional(),
         page: z.coerce.number().default(1),
         limit: z.coerce.number().default(10),
-        type: z.enum(['INCOME', 'EXPENSE']).optional(),
+        type: z.enum(['INCOME', 'EXPENSE', 'TRANSFER']).optional(),
       }),
       response: {
         200: z.object({
@@ -22,9 +22,9 @@ export async function listTransactions(app: FastifyInstance) {
             userId: z.string(),
             accountId: z.uuid(),
             amount: z.string(),
-            type: z.enum(['INCOME', 'EXPENSE']),
+            type: z.enum(['INCOME', 'EXPENSE', 'TRANSFER']),
             date: z.coerce.date(),
-            description: z.string(),
+            description: z.string().nullable(),
             comments: z.string().nullable(),
             categoryId: z.uuid().nullable(),
             createdAt: z.coerce.date(),

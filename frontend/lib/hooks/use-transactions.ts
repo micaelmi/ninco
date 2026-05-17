@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import {
   getTransactions,
   createTransaction,
+  createTransfer,
   updateTransaction,
   deleteTransaction,
   getDashboardSummary,
@@ -13,6 +14,7 @@ import {
 import type {
   Transaction,
   CreateTransactionInput,
+  CreateTransferInput,
   UpdateTransactionInput,
   DashboardSummary,
 } from '../api/types';
@@ -31,7 +33,7 @@ export const transactionKeys = {
 };
 
 // Queries
-export function useTransactions(filters?: { from?: string; to?: string; page?: number; limit?: number; type?: 'INCOME' | 'EXPENSE' }) {
+export function useTransactions(filters?: { from?: string; to?: string; page?: number; limit?: number; type?: 'INCOME' | 'EXPENSE' | 'TRANSFER' }) {
   const { user } = useUser();
 
   return useQuery({
@@ -67,6 +69,23 @@ export function useCreateTransaction() {
     },
     onError: (err) => {
       toast.error('Failed to create transaction');
+    },
+  });
+}
+
+export function useCreateTransfer() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: createTransfer,
+    onSuccess: () => {
+      toast.success('Transfer completed');
+      queryClient.invalidateQueries({ queryKey: transactionKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: ['accounts'] });
+      queryClient.invalidateQueries({ queryKey: transactionKeys.summaries() });
+    },
+    onError: (err) => {
+      toast.error('Failed to create transfer');
     },
   });
 }
