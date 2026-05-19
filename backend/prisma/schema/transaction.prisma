@@ -14,4 +14,7 @@ model Transaction {
   category    Category?       @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   tags        Tag[]           @relation("TagToTransaction")
+
+  @@index([userId, date])
+  @@index([accountId])
 }

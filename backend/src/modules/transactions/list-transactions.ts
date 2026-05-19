@@ -12,7 +12,7 @@ export async function listTransactions(app: FastifyInstance) {
         from: z.coerce.date().optional(),
         to: z.coerce.date().optional(),
         page: z.coerce.number().default(1),
-        limit: z.coerce.number().default(10),
+        limit: z.coerce.number().min(1).max(100).default(10),
         type: z.enum(['INCOME', 'EXPENSE', 'TRANSFER']).optional(),
       }),
       response: {

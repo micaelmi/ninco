@@ -52,6 +52,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const body = await request.json() as RequestBody;
+    if (!body.message || body.message.length > 1000) {
+      return NextResponse.json({ error: 'Message is too long or missing' }, { status: 400 });
+    }
+
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
       return NextResponse.json(

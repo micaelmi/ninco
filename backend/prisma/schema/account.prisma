@@ -13,4 +13,6 @@ model Account {
   defaultForUsers User[]        @relation("UserDefaultAccount")
   currency        Currency?     @relation(fields: [currencyCode], references: [code])
   transactions Transaction[]
+
+  @@index([userId])
 }

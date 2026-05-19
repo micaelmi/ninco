@@ -12,9 +12,9 @@ export async function createTransaction(app: FastifyInstance) {
         amount: z.number(),
         type: z.enum(['INCOME', 'EXPENSE', 'TRANSFER']),
         date: z.string().datetime(),
-        description: z.string().optional(),
+        description: z.string().max(255).optional(),
         accountId: z.uuid(),
-        comments: z.string().optional(),
+        comments: z.string().max(2000).optional(),
         categoryId: z.uuid().optional(),
         tagIds: z.array(z.uuid()).optional(),
       }),
@@ -36,6 +36,16 @@ export async function createTransaction(app: FastifyInstance) {
     });
     if (!account) {
       return reply.status(404).send({ message: 'Account not found' } as any);
+    }
+
+    if (categoryId) {
+      const category = await prisma.category.findUnique({ where: { id: categoryId, userId } });
+      if (!category) return reply.status(404).send({ message: 'Category not found' } as any);
+    }
+
+    if (tagIds && tagIds.length > 0) {
+      const tags = await prisma.tag.findMany({ where: { id: { in: tagIds }, userId } });
+      if (tags.length !== tagIds.length) return reply.status(404).send({ message: 'One or more tags not found' } as any);
     }
 
     const transaction = await prisma.$transaction(async (tx: any) => {

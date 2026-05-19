@@ -41,9 +41,9 @@ export async function POST(request: NextRequest) {
 
     const reportData: ReportData = await request.json();
 
-    if (!reportData || !reportData.period) {
+    if (!reportData || !reportData.period || JSON.stringify(reportData).length > 50000) {
       return NextResponse.json(
-        { error: 'Missing required report data.' },
+        { error: 'Invalid or excessively large report data.' },
         { status: 400 }
       );
     }

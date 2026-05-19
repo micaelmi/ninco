@@ -4,7 +4,7 @@ services:
     image: postgres:14-alpine
     container_name: ninco-postgres-db
     ports:
-      - "5432:5432"  # Expose PostgreSQL port for development  (remove in production)
+      - "127.0.0.1:5432:5432"  # Expose PostgreSQL port for development on localhost
     restart: unless-stopped
     environment:
       - POSTGRES_USER=${DATABASE_USERNAME:-docker}

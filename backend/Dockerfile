@@ -7,7 +7,7 @@ WORKDIR /app
 # ── Stage 2: install dependencies ──────────────────────────────
 FROM base AS deps
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-RUN pnpm install --no-frozen-lockfile
+RUN pnpm install --frozen-lockfile
 
 # ── Stage 3: build ─────────────────────────────────────────────
 FROM base AS build
@@ -23,12 +23,17 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 appuser
+
 # Copy built output and production dependencies
-COPY --from=build /app/dist ./dist
-COPY --from=build /app/node_modules ./node_modules
-COPY --from=build /app/package.json ./package.json
-COPY --from=build /app/prisma ./prisma
-COPY --from=build /app/prisma.config.ts ./prisma.config.ts
+COPY --from=build --chown=appuser:nodejs /app/dist ./dist
+COPY --from=build --chown=appuser:nodejs /app/node_modules ./node_modules
+COPY --from=build --chown=appuser:nodejs /app/package.json ./package.json
+COPY --from=build --chown=appuser:nodejs /app/prisma ./prisma
+COPY --from=build --chown=appuser:nodejs /app/prisma.config.ts ./prisma.config.ts
+
+USER appuser
 
 EXPOSE 3333
 
