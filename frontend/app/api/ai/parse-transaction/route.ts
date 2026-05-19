@@ -65,7 +65,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body: RequestBody = await request.json();
     const { message, context } = body;
 
     if (!message || !context) {
