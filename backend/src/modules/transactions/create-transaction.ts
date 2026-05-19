@@ -24,6 +24,7 @@ export async function createTransaction(app: FastifyInstance) {
           amount: z.string(),
           accountId: z.uuid(),
         }),
+        404: z.object({ message: z.string() }),
       },
     },
   }, async (request, reply) => {
@@ -37,7 +38,7 @@ export async function createTransaction(app: FastifyInstance) {
       return reply.status(404).send({ message: 'Account not found' } as any);
     }
 
-    const transaction = await prisma.$transaction(async (tx) => {
+    const transaction = await prisma.$transaction(async (tx: any) => {
       const transaction = await tx.transaction.create({
         data: {
           userId,

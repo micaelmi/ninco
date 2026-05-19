@@ -65,7 +65,7 @@ export async function getDashboardSummary(app: FastifyInstance) {
       },
     });
 
-    const totalBalance = accounts.reduce((sum, acc) => sum + acc.balance.toNumber(), 0);
+    const totalBalance = accounts.reduce((sum: number, acc: any) => sum + acc.balance.toNumber(), 0);
 
     // 2. Income & Expense in range
     const transactions = await prisma.transaction.findMany({
@@ -86,7 +86,7 @@ export async function getDashboardSummary(app: FastifyInstance) {
     const incomeCategories: Record<string, { id: string; name: string; value: number; color: string }> = {};
     const expenseCategories: Record<string, { id: string; name: string; value: number; color: string }> = {};
 
-    transactions.forEach(t => {
+    transactions.forEach((t: any) => {
       // Skip transfers – they are internal account movements, not income or expense
       if (t.type === 'TRANSFER') return;
 
@@ -118,21 +118,21 @@ export async function getDashboardSummary(app: FastifyInstance) {
     if (diffDays <= 31) {
       const days = eachDayOfInterval({ start: startDate, end: endDate });
       chartData = days.map((day: Date) => {
-        const dayTransactions = transactions.filter(t => isSameDay(t.date, day));
+        const dayTransactions = transactions.filter((t: any) => isSameDay(t.date, day));
         return {
           period: format(day, 'dd/MM'),
-          income: dayTransactions.filter(t => t.type === 'INCOME').reduce((sum, t) => sum + t.amount.toNumber(), 0),
-          expense: dayTransactions.filter(t => t.type === 'EXPENSE').reduce((sum, t) => sum + t.amount.toNumber(), 0),
+          income: dayTransactions.filter((t: any) => t.type === 'INCOME').reduce((sum: number, t: any) => sum + t.amount.toNumber(), 0),
+          expense: dayTransactions.filter((t: any) => t.type === 'EXPENSE').reduce((sum: number, t: any) => sum + t.amount.toNumber(), 0),
         };
       });
     } else {
       const months = eachMonthOfInterval({ start: startDate, end: endDate });
       chartData = months.map((month: Date) => {
-        const monthTransactions = transactions.filter(t => isSameMonth(t.date, month));
+        const monthTransactions = transactions.filter((t: any) => isSameMonth(t.date, month));
         return {
           period: format(month, 'MMM yyyy'),
-          income: monthTransactions.filter(t => t.type === 'INCOME').reduce((sum, t) => sum + t.amount.toNumber(), 0),
-          expense: monthTransactions.filter(t => t.type === 'EXPENSE').reduce((sum, t) => sum + t.amount.toNumber(), 0),
+          income: monthTransactions.filter((t: any) => t.type === 'INCOME').reduce((sum: number, t: any) => sum + t.amount.toNumber(), 0),
+          expense: monthTransactions.filter((t: any) => t.type === 'EXPENSE').reduce((sum: number, t: any) => sum + t.amount.toNumber(), 0),
         };
       });
     }
@@ -142,7 +142,7 @@ export async function getDashboardSummary(app: FastifyInstance) {
       income: totalIncome,
       expense: totalExpense,
       chartData,
-      accounts: accounts.map(a => ({
+      accounts: accounts.map((a: any) => ({
         ...a,
         balance: a.balance.toNumber(),
       })),

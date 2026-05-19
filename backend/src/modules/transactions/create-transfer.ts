@@ -48,7 +48,7 @@ export async function createTransfer(app: FastifyInstance) {
     const sourceDesc = `${descPrefix}Transfer to ${toAccount.name}`;
     const destDesc = `${descPrefix}Transfer from ${fromAccount.name}`;
 
-    const result = await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx: any) => {
       // Create source transaction (outgoing)
       const sourceTransaction = await tx.transaction.create({
         data: {

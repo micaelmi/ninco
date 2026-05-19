@@ -52,7 +52,7 @@ export async function updateTransaction(app: FastifyInstance) {
       }
     }
 
-    const transaction = await prisma.$transaction(async (tx) => {
+    const transaction = await prisma.$transaction(async (tx: any) => {
       const oldTransaction = await tx.transaction.findUnique({
         where: { id, userId },
       });

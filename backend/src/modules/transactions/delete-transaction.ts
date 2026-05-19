@@ -20,7 +20,7 @@ export async function deleteTransaction(app: FastifyInstance) {
     const userId = request.userId;
     const { id } = request.params;
 
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: any) => {
       const transaction = await tx.transaction.findUnique({
         where: { id, userId },
       });

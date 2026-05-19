@@ -83,7 +83,7 @@ export async function listTransactions(app: FastifyInstance) {
     ]);
 
     return {
-      data: transactions.map(t => ({
+      data: transactions.map((t: any) => ({
         ...t,
         amount: t.amount.toString(),
       })),
