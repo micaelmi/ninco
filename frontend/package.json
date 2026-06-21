@@ -45,7 +45,7 @@
     "scheduler": "^0.27.0",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.5.0",
-    "xlsx": "https://cdn.sheetjs.com/xlsx-latest/xlsx-latest.tgz",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.2/xlsx-0.20.2.tgz",
     "zod": "^4.3.6"
   },
   "devDependencies": {
