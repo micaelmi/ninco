@@ -114,8 +114,8 @@ importers:
         specifier: ^3.5.0
         version: 3.5.0
       xlsx:
-        specifier: https://cdn.sheetjs.com/xlsx-latest/xlsx-latest.tgz
-        version: https://cdn.sheetjs.com/xlsx-latest/xlsx-latest.tgz
+        specifier: https://cdn.sheetjs.com/xlsx-0.20.2/xlsx-0.20.2.tgz
+        version: https://cdn.sheetjs.com/xlsx-0.20.2/xlsx-0.20.2.tgz
       zod:
         specifier: ^4.3.6
         version: 4.3.6
@@ -3909,9 +3909,9 @@ packages:
     resolution: {integrity: sha512-BN22B5eaMMI9UMtjrGd5g5eCYPpCPDUy0FJXbYsaT5zYxjFOckS53SQDE3pWkVoWpHXVb3BrYcEN4Twa55B5cA==}
     engines: {node: '>=0.10.0'}
 
-  xlsx@https://cdn.sheetjs.com/xlsx-latest/xlsx-latest.tgz:
-    resolution: {tarball: https://cdn.sheetjs.com/xlsx-latest/xlsx-latest.tgz}
-    version: 0.20.3
+  xlsx@https://cdn.sheetjs.com/xlsx-0.20.2/xlsx-0.20.2.tgz:
+    resolution: {tarball: https://cdn.sheetjs.com/xlsx-0.20.2/xlsx-0.20.2.tgz}
+    version: 0.20.2
     engines: {node: '>=0.8'}
     hasBin: true
 
@@ -7890,7 +7890,7 @@ snapshots:
 
   word-wrap@1.2.5: {}
 
-  xlsx@https://cdn.sheetjs.com/xlsx-latest/xlsx-latest.tgz: {}
+  xlsx@https://cdn.sheetjs.com/xlsx-0.20.2/xlsx-0.20.2.tgz: {}
 
   xml-name-validator@5.0.0: {}
 

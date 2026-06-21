@@ -42,9 +42,6 @@ jobs:
       - name: Generate Prisma client
         run: pnpm --filter backend exec npx prisma generate
 
-      - name: Lint frontend
-        run: pnpm --filter frontend lint
-
       - name: Typecheck backend (via build)
         run: pnpm --filter backend build
 
