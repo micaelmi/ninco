@@ -52,6 +52,24 @@ export async function updateTransaction(app: FastifyInstance) {
       }
     }
 
+    if (categoryId) {
+      const category = await prisma.category.findUnique({
+        where: { id: categoryId, userId },
+      });
+      if (!category) {
+        return reply.status(404).send({ message: 'Category not found' } as any);
+      }
+    }
+
+    if (tagIds && tagIds.length > 0) {
+      const tags = await prisma.tag.findMany({
+        where: { id: { in: tagIds }, userId },
+      });
+      if (tags.length !== tagIds.length) {
+        return reply.status(404).send({ message: 'One or more tags not found' } as any);
+      }
+    }
+
     const transaction = await prisma.$transaction(async (tx: any) => {
       const oldTransaction = await tx.transaction.findUnique({
         where: { id, userId },
