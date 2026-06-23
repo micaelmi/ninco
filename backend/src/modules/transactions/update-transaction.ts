@@ -53,8 +53,14 @@ export async function updateTransaction(app: FastifyInstance) {
     }
 
     if (categoryId) {
-      const category = await prisma.category.findUnique({
-        where: { id: categoryId, userId },
+      const category = await prisma.category.findFirst({
+        where: {
+          id: categoryId,
+          OR: [
+            { userId },
+            { userId: null },
+          ],
+        },
       });
       if (!category) {
         return reply.status(404).send({ message: 'Category not found' } as any);

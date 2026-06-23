@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { buildTestApp, authHeaders } from '../../../test-helpers/app';
 import type { FastifyInstance } from 'fastify';
+import { prisma } from '../../../lib/prisma';
 
 let app: FastifyInstance;
 
@@ -106,5 +107,53 @@ describe('POST /transactions', () => {
     });
 
     expect(res.statusCode).toBe(400);
+  });
+
+  it('allows creating a transaction with a global category', async () => {
+    const accountId = await createTestAccount();
+    const globalCategory = await prisma.category.create({
+      data: {
+        name: 'Global Food',
+        type: 'EXPENSE',
+        userId: null,
+      },
+    });
+
+    const res = await app.inject({
+      method: 'POST',
+      url: '/transactions',
+      headers: authHeaders(),
+      payload: {
+        amount: 25,
+        type: 'EXPENSE',
+        date: new Date().toISOString(),
+        description: 'Snacks',
+        accountId,
+        categoryId: globalCategory.id,
+      },
+    });
+
+    expect(res.statusCode).toBe(201);
+  });
+
+  it('returns 404 when category does not exist', async () => {
+    const accountId = await createTestAccount();
+
+    const res = await app.inject({
+      method: 'POST',
+      url: '/transactions',
+      headers: authHeaders(),
+      payload: {
+        amount: 25,
+        type: 'EXPENSE',
+        date: new Date().toISOString(),
+        description: 'Snacks',
+        accountId,
+        categoryId: '00000000-0000-0000-0000-000000000000',
+      },
+    });
+
+    expect(res.statusCode).toBe(404);
+    expect(res.json().message).toBe('Category not found');
   });
 });
