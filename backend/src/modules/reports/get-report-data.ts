@@ -65,7 +65,7 @@ export async function getReportData(app: FastifyInstance) {
     const { from: startDate, to: endDate } = request.query;
 
     // Fetch all transactions in the range with categories and tags
-    const transactions = await prisma.transaction.findMany({
+    const allTransactions = await prisma.transaction.findMany({
       where: {
         userId,
         date: {
@@ -78,6 +78,9 @@ export async function getReportData(app: FastifyInstance) {
         tags: { select: { id: true, name: true } },
       },
     });
+
+    const transactions = allTransactions.filter(t => t.type !== 'TRANSFER');
+
 
     // Calculate totals
     let totalIncome = 0;
